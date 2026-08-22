@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α0.6</title>
+<title>読み聞かせるね チュゴンくん α0.8</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -106,6 +106,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
 .best{display:grid;grid-template-columns:95px 1fr;gap:12px;align-items:center}
 .best img{width:95px;aspect-ratio:3/4;object-fit:cover;border-radius:12px}.best-tie{margin-top:12px;padding-top:12px;border-top:1px dashed var(--line)}
 .help-list{display:grid;gap:9px}.help-item{background:#fff;border:1px solid var(--line);border-radius:18px;padding:14px}
+.help-item p{margin:0;line-height:1.75}.help-line{display:block;margin-top:8px;padding-left:1.2em;text-indent:-1.2em}.help-line:first-child{margin-top:0}.best-actions{margin-top:10px}.best-actions .bigbtn{min-height:48px;padding:10px 8px;font-size:13px}.dex-link{width:100%;margin:8px 0 4px;text-align:left}.legend-note{font-size:13px;line-height:1.6}.dex-filter-group{margin-top:12px}.dex-filter-title{font-size:12px;font-weight:1000;color:var(--muted);margin:0 0 6px 3px}
 
 .overlay{position:fixed;inset:0;z-index:100;background:rgba(31,26,22,.76);display:none;align-items:center;justify-content:center;padding:22px}
 .overlay.show{display:flex}
@@ -177,21 +178,21 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α0.6：本棚12冊・アイテム一覧・タイミー／タイトル／コメント拡張版。写真の主人公判定は、いまは撮影後に呼び名を入力する仮仕様です。</div>
+    <div class="footer-note">α0.9：最高評価シェア／表紙アイコン再除去／遊びかた改行／アイテム図鑑の入手状況フィルタ対応版。写真の主人公判定は、いまは撮影後に呼び名を入力する仮仕様です。</div>
   </main>
 
   <main id="screen-help" class="screen">
     <div class="card">
       <div class="section-title"><h2>📖 遊びかた</h2><button class="ghost" data-nav="home">← ホーム</button></div>
       <div class="help-list">
-        <div class="help-item"><h3>🎯 目的</h3><p>1週間（7日間）で、チュゴンくんから高評価をもらえる絵本を作ろう。評価は⭐1〜10！</p></div>
-        <div class="help-item"><h3>🕘 時間</h3><p>1日は9:00〜21:00。写真を撮るだけなら0時間、写真保存+1時間、ガチャ+1時間、絵本作成+2時間、読み聞かせ+2時間。タイミーは2〜8時間です。</p></div>
-        <div class="help-item"><h3>📸 写真</h3><p>好きなだけ撮影可能。アルバムは最大9枚。いっぱいなら1枚と交換します。</p></div>
-        <div class="help-item"><h3>🎰 ガチャ</h3><p>1回500円。C / R / SR / SSR の300アイテム。絵本作成で使ったアイテムは1個消費します。</p><button class="ghost" data-nav="itemdex" style="width:100%;margin-top:8px">🎁 アイテム一覧</button></div>
-        <div class="help-item"><h3>🏃 タイミー</h3><p>1日1回だけ働けます。毎日ランダムに出る3つの仕事から選択。仕事によって <b>2〜8時間</b>、報酬も大きく変わります。</p></div>
-        <div class="help-item"><h3>🖋️ 絵本</h3><p>写真1枚＋アイテム1個からタイトルと表紙を作ります。本棚は最大12冊。</p></div>
-        <div class="help-item"><h3>👦 評価</h3><p>チュゴンくんはユーモラスな作品やクセのあるタイトルが好き。でも変すぎると低評価になることも。</p></div>
-        <div class="help-item"><h3>🔁 7日目のあと</h3><p>週の結果発表後、新しい1日目へ。アルバム写真と本棚の絵本は引き継ぎ、お金と所持アイテムはリセットします。</p></div>
+        <div class="help-item"><h3>🎯 目的</h3><p><span class="help-line">・1週間（7日間）で、チュゴンくんから高評価をもらえる絵本を作ろう。</span><span class="help-line">・評価は <b>⭐1〜10</b>！</span></p></div>
+        <div class="help-item"><h3>🕘 時間</h3><p><span class="help-line">・1日は <b>9:00〜21:00</b>。</span><span class="help-line">・📸 撮影だけ：0時間 ／ 写真保存：+1時間</span><span class="help-line">・🎰 ガチャ：+1時間 ／ 🖋️ 絵本作成：+2時間</span><span class="help-line">・👦 読み聞かせ：+2時間 ／ 🏃 タイミー：2〜8時間</span></p></div>
+        <div class="help-item"><h3>📸 写真</h3><p><span class="help-line">・写真は好きなだけ撮影できます。</span><span class="help-line">・アルバムは <b>最大9枚</b>。</span><span class="help-line">・いっぱいの時は、残したい写真と交換して保存します。</span></p></div>
+        <div class="help-item"><h3>🎰 ガチャ</h3><p><span class="help-line">・1回 <b>500円</b>。</span><span class="help-line">・C / R / SR / SSR、全部で <b>300アイテム</b>。</span><span class="help-line">・絵本作成に使ったアイテムは1個消費します。</span></p><button class="ghost" data-open-itemdex="help" style="width:100%;margin-top:10px">🎁 アイテム一覧</button></div>
+        <div class="help-item"><h3>🏃 タイミー</h3><p><span class="help-line">・働けるのは <b>1日1回</b>。</span><span class="help-line">・毎日ランダムに出る3つの仕事から選びます。</span><span class="help-line">・仕事によって <b>2〜8時間</b>、もらえる金額も大きく変わります。</span></p></div>
+        <div class="help-item"><h3>🖋️ 絵本</h3><p><span class="help-line">・アルバムの写真1枚＋アイテム1個で絵本を作ります。</span><span class="help-line">・組み合わせから、タイトルと表紙ができあがります。</span><span class="help-line">・本棚は <b>最大12冊</b>。</span></p></div>
+        <div class="help-item"><h3>👦 評価</h3><p><span class="help-line">・読み聞かせると、チュゴンくんが <b>⭐1〜10</b>で評価します。</span><span class="help-line">・ユーモラスな作品や、クセのあるタイトルが好き。</span><span class="help-line">・ただし、変すぎると低評価になることも……。</span></p></div>
+        <div class="help-item"><h3>🔁 7日目のあと</h3><p><span class="help-line">・7日目が終わると、その週のリザルトを発表。</span><span class="help-line">・その後、新しい1日目が始まります。</span><span class="help-line">・📸 アルバム写真・📚 本棚の絵本は引き継ぎ。</span><span class="help-line">・💰 お金・🎒 所持アイテムはリセットされます。</span></p></div>
       </div>
     </div>
   </main>
@@ -228,6 +229,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <p class="muted">C 60% / R 28% / SR 10% / SSR 2%</p>
       <button id="pullGachaBtn" class="bigbtn primary">🎰 500円で回す！</button>
       <div id="gachaLast" style="margin-top:14px"></div>
+      <button class="ghost" data-open-itemdex="gacha" style="width:100%;margin-top:14px">🎁 アイテム一覧を見る</button>
     </div>
   </main>
 
@@ -235,17 +237,18 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
     <div class="card">
       <div class="section-title"><h2>🎒 所持アイテム</h2><button class="ghost" data-nav="home">← ホーム</button></div>
       <div id="itemFilters" class="chipbar"></div>
-      <p id="dexProgress" class="muted"></p>
+      <div id="dexProgress"></div>
       <div id="itemsGrid" class="grid"></div>
     </div>
   </main>
 
   <main id="screen-itemdex" class="screen">
     <div class="card">
-      <div class="section-title"><h2>🎁 アイテム一覧</h2><button class="ghost" data-nav="help">← 遊びかた</button></div>
-      <p class="muted">ガチャから出る可能性がある全300種類。レア度で絞り込めます。</p>
-      <div id="itemDexFilters" class="chipbar"></div>
-      <div id="itemDexGrid" class="grid" style="margin-top:10px"></div>
+      <div class="section-title"><h2>🎁 アイテム一覧</h2><button id="itemDexBackBtn" class="ghost" data-nav="help">← 遊びかた</button></div>
+      <p class="muted legend-note">ガチャから出る可能性がある全300種類。<br>⭕️ = これまでに手にしたことがあるアイテム / ⚪️ = まだ未入手</p>
+      <div class="dex-filter-group"><div class="dex-filter-title">レア度で絞る</div><div id="itemDexFilters" class="chipbar"></div></div>
+      <div class="dex-filter-group"><div class="dex-filter-title">入手状況で絞る</div><div id="itemDexSeenFilters" class="chipbar"></div></div>
+      <div id="itemDexGrid" class="grid" style="margin-top:12px"></div>
     </div>
   </main>
 
@@ -324,8 +327,10 @@ const clone=o=>JSON.parse(JSON.stringify(o));
 const $=id=>document.getElementById(id);
 let state=clone(DEFAULT_STATE);
 let currentScreen="title";
+let itemDexBackScreen="help";
+const ITEMDEX_BACK_LABELS={help:"遊びかた",gacha:"ガチャ",items:"所持アイテム",home:"ホーム"};
 let capturedData=null,pendingPhoto=null,pendingBook=null,selectedPhotoId=null,selectedItemId=null;
-let jobsToday=[],itemFilter="ALL",itemDexFilter="ALL",dbPromise=null,weeklyResultCache=null,weeklyResultBlob=null;
+let jobsToday=[],itemFilter="ALL",itemDexFilter="ALL",itemDexSeenFilter="ALL",dbPromise=null,weeklyResultCache=null,weeklyResultBlob=null,bestResultBlobCache=new Map();
 const money=n=>Number(n).toLocaleString("ja-JP")+"円";
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -378,6 +383,15 @@ function show(screen){
  window.scrollTo({top:0,behavior:"smooth"});
  renderAll();
 }
+function openItemDex(from){
+ itemDexBackScreen=from||currentScreen||"help";
+ const btn=$("itemDexBackBtn");
+ if(btn){
+  btn.dataset.nav=itemDexBackScreen;
+  btn.textContent=`← ${ITEMDEX_BACK_LABELS[itemDexBackScreen]||"戻る"}`;
+ }
+ show("itemdex");
+}
 function toast(msg){
  const t=$("toast");t.textContent=msg;t.classList.add("show");
  clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),1900);
@@ -389,6 +403,7 @@ function closeModal(){$("overlay").classList.remove("show");$("modal").innerHTML
 function spendTime(h){if(!canSpend(h))return false;state.hour+=h;return true;}
 
 function renderAll(){
+ bestResultBlobCache.clear();
  $("topDay").textContent=`📅 ${state.day}日目 / 7日`;
  $("topTime").textContent=`🕘 ${state.hour}:00`;
  $("topMoney").textContent=`💰 ${money(state.money)}`;
@@ -404,7 +419,7 @@ function renderBest(){
  const bestRating=Math.max(...rated.map(b=>b.rating));
  const bests=rated.filter(b=>b.rating===bestRating);
  const tie=bests.length>1?`<div class="notice success" style="margin-bottom:10px">🏆 同率最高評価が ${bests.length}冊！</div>`:"";
- $("bestContent").innerHTML=tie+bests.map((best,i)=>`<div class="best ${i?"best-tie":""}"><img src="${best.cover}"><div><b style="font-size:20px">⭐${best.rating} / 10</b><div style="font-weight:1000;margin:5px 0">『${esc(best.title)}』</div><div class="muted">👦「${esc(best.comment)}」</div></div></div>`).join("");
+ $("bestContent").innerHTML=tie+bests.map((best,i)=>`<div class="${i?"best-tie":""}"><div class="best"><img src="${best.cover}"><div><b style="font-size:20px">⭐${best.rating} / 10</b><div style="font-weight:1000;margin:5px 0">『${esc(best.title)}』</div><div class="muted">👦「${esc(best.comment)}」</div></div></div><div class="row best-actions"><button class="bigbtn" data-save-best="${best.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${best.id}">📤 共有</button></div></div>`).join("");
 }
 function renderAlbum(){
  $("albumHead").textContent=`${state.album.length}/9`;
@@ -414,15 +429,22 @@ function renderAlbum(){
 function renderItems(){
  const filters=["ALL","C","R","SR","SSR"];
  $("itemFilters").innerHTML=filters.map(f=>`<button class="chip ${itemFilter===f?"active":""}" data-filter="${f}">${f==="ALL"?"すべて":f}</button>`).join("");
- $("dexProgress").textContent=`入手済み ${Object.keys(state.seen).length} / ${ITEMS.length}`;
+ $("dexProgress").innerHTML=`<button class="ghost dex-link" data-open-itemdex="items">⭕️ 入手済み ${Object.keys(state.seen).length} / ${ITEMS.length}　｜　🎁 アイテム一覧を開く</button>`;
  const list=ITEMS.filter(it=>(state.inventory[it.id]||0)>0&&(itemFilter==="ALL"||it.rarity===itemFilter));
  $("itemsGrid").innerHTML=list.length?list.map(it=>`<div class="item"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">×${state.inventory[it.id]}</div></div>`).join(""):'<div class="empty" style="grid-column:1/-1">まだアイテムがありません。🎰</div>';
 }
 function renderItemDex(){
- const filters=["ALL","C","R","SR","SSR"];
- $("itemDexFilters").innerHTML=filters.map(f=>`<button class="chip ${itemDexFilter===f?"active":""}" data-dex-filter="${f}">${f==="ALL"?"すべて":f}</button>`).join("");
- const list=ITEMS.filter(it=>itemDexFilter==="ALL"||it.rarity===itemDexFilter);
- $("itemDexGrid").innerHTML=list.map(it=>`<div class="item"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">No.${String(it.id).padStart(3,"0")}</div></div>`).join("");
+ const rarityFilters=["ALL","C","R","SR","SSR"];
+ $("itemDexFilters").innerHTML=rarityFilters.map(f=>`<button class="chip ${itemDexFilter===f?"active":""}" data-dex-filter="${f}">${f==="ALL"?"すべて":f}</button>`).join("");
+ const seenFilters=[["ALL","すべて"],["SEEN","⭕️ 入手済み"],["UNSEEN","⚪️ 未入手"]];
+ $("itemDexSeenFilters").innerHTML=seenFilters.map(([f,label])=>`<button class="chip ${itemDexSeenFilter===f?"active":""}" data-dex-seen-filter="${f}">${label}</button>`).join("");
+ const list=ITEMS.filter(it=>{
+  const rarityOK=itemDexFilter==="ALL"||it.rarity===itemDexFilter;
+  const seen=!!state.seen[it.id];
+  const seenOK=itemDexSeenFilter==="ALL"||(itemDexSeenFilter==="SEEN"&&seen)||(itemDexSeenFilter==="UNSEEN"&&!seen);
+  return rarityOK&&seenOK;
+ });
+ $("itemDexGrid").innerHTML=list.length?list.map(it=>{const seen=!!state.seen[it.id],have=state.inventory[it.id]||0;return `<div class="item"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">${seen?"⭕️":"⚪️"} No.${String(it.id).padStart(3,"0")}${have?` / 所持×${have}`:""}</div></div>`;}).join(""):'<div class="empty" style="grid-column:1/-1">この条件のアイテムはありません。</div>';
 }
 function renderShelf(){
  $("shelfHead").textContent=`${state.books.length}/12`;
@@ -595,14 +617,14 @@ async function createBook(){
  const messages=[["🖋️","絵本を執筆中…"],["💭","物語を考えています…"],["✨","タイトルを決めています…"],["🎨","表紙を描いています…"],["👶","チュゴンくんが楽しみに待っています…"]];
  showModal('<div class="loading-icon">🖋️</div><h2>絵本を執筆中…</h2>');
  for(const [icon,text] of messages){$("modal").innerHTML=`<div class="loading-icon">${icon}</div><h2>${text}</h2>`;await wait(460);}
- const cover=await makeCover(p.data,made.title,it.emoji);
+ const cover=await makeCover(p.data,made.title);
  closeModal();
- const book={id:uid(),title:made.title,titleKind:made.kind,cover,coverVersion:2,photoId:p.id,character:p.character,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
+ const book={id:uid(),title:made.title,titleKind:made.kind,cover,coverVersion:5,photoId:p.id,character:p.character,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
  state.inventory[it.id]--;spendTime(2);state.daily.books++;
  if(state.books.length>=12){pendingBook=book;commit();renderBookSwap();return;}
  state.books.push(book);commit();showBookComplete(book);
 }
-function makeCover(photo,title,emoji){
+function makeCover(photo,title){
  return new Promise(resolve=>{
   const img=new Image();
   img.onload=()=>{
@@ -610,22 +632,36 @@ function makeCover(photo,title,emoji){
    const scale=Math.max(600/img.width,800/img.height),w=img.width*scale,h=img.height*scale;
    x.drawImage(img,(600-w)/2,(800-h)/2,w,h);
    const g=x.createLinearGradient(0,0,0,800);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(.55,"rgba(0,0,0,.08)");g.addColorStop(1,"rgba(0,0,0,.72)");x.fillStyle=g;x.fillRect(0,0,600,800);
-   // 表紙写真を隠さないよう、シリーズ名の大きな帯は表示しない。
-   x.fillStyle="rgba(255,255,255,.82)";roundRect(x,492,26,78,78,22);x.fill();
-   x.textAlign="center";x.font="48px sans-serif";x.fillText(emoji,531,82);
+   // 写真をできるだけ見せるため、右上のアイコンを含む装飾は置かない。
    x.textAlign="center";x.strokeStyle="rgba(0,0,0,.42)";x.lineWidth=8;x.fillStyle="#fff";x.font="900 46px sans-serif";
    wrapText(x,title,300,620,500,60);
-   resolve(c.toDataURL("image/jpeg",.78));
+   resolve(c.toDataURL("image/jpeg",.82));
   };img.src=photo;
+ });
+}
+function removeLegacyCornerIcon(cover){
+ return new Promise(resolve=>{
+  const img=new Image();
+  img.onload=()=>{
+   const c=document.createElement("canvas");c.width=600;c.height=800;const x=c.getContext("2d");
+   x.drawImage(img,0,0,600,800);
+   // 元写真がもうアルバムに無い古い表紙は、近くの写真領域を複製して右上アイコンを隠す。
+   x.drawImage(img,398,20,86,92,488,20,86,92);
+   resolve(c.toDataURL("image/jpeg",.82));
+  };
+  img.onerror=()=>resolve(cover);
+  img.src=cover;
  });
 }
 async function migrateBookCovers(){
  let changed=false;
  for(const b of state.books){
-  if(b.coverVersion===2)continue;
+  if(b.coverVersion===5)continue;
   const source=state.album.find(p=>p.id===b.photoId);
-  if(!source?.data)continue;
-  try{b.cover=await makeCover(source.data,b.title,b.itemEmoji||"📕");b.coverVersion=2;changed=true;}catch(_){ }
+  try{
+   b.cover=source?.data?await makeCover(source.data,b.title):await removeLegacyCornerIcon(b.cover);
+   b.coverVersion=5;changed=true;
+  }catch(_){ }
  }
  if(changed)persistState();
 }
@@ -779,7 +815,7 @@ function readBook(id){
 }
 function showBookDetail(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
- $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.week}週目 ${b.day}日目</p>${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-read-book="${b.id}">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
+ $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.week}週目 ${b.day}日目</p>${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-read-book="${b.id}">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
  show("result");
 }
 
@@ -796,6 +832,51 @@ function drawResultText(ctx,text,x,y,maxWidth,lineHeight,maxLines=6){
  lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));
  return y+lines.length*lineHeight;
 }
+async function createBestBookResultBlob(book){
+ if(!book||!Number.isFinite(book.rating))throw new Error("rated book required");
+ const c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");
+ const bg=x.createLinearGradient(0,0,0,1350);bg.addColorStop(0,"#e9f7ff");bg.addColorStop(.34,"#fff8e9");bg.addColorStop(1,"#f4e5cf");x.fillStyle=bg;x.fillRect(0,0,1080,1350);
+ x.fillStyle="#119de2";roundRect(x,55,55,970,205,42);x.fill();
+ x.textAlign="center";x.fillStyle="#fff";x.font="900 55px sans-serif";x.fillText("読み聞かせるね チュゴンくん",540,135);
+ x.font="900 42px sans-serif";x.fillText("🏆 現在の最高評価絵本",540,205);
+ x.fillStyle="#40342d";x.font="1000 94px sans-serif";x.fillText(`⭐ ${book.rating} / 10`,540,390);
+ const img=await loadCanvasImage(book.cover);x.drawImage(img,80,480,390,520);
+ x.textAlign="left";x.fillStyle="#40342d";x.font="900 43px sans-serif";
+ let yy=drawResultText(x,`『${book.title}』`,520,535,470,56,4);
+ x.font="800 27px sans-serif";x.fillStyle="#796b62";yy+=22;
+ yy=drawResultText(x,`📷 ${book.character||"主役不明"}`,520,yy,470,38,2);
+ yy=drawResultText(x,`${book.itemEmoji||"🎁"} ${book.itemName||"アイテム"}`,520,yy+6,470,38,2);
+ yy=drawResultText(x,`📅 ${book.week}週目 ${book.day}日目`,520,yy+6,470,38,2);
+ x.fillStyle="#fff";roundRect(x,495,yy+28,510,315,30);x.fill();
+ x.fillStyle="#40342d";x.font="900 29px sans-serif";x.fillText("👦 チュゴンくん",530,yy+82);
+ x.font="800 28px sans-serif";x.fillStyle="#5d5148";drawResultText(x,`「${book.comment||"……。"}」`,530,yy+130,440,39,5);
+ x.textAlign="center";x.fillStyle="#6f6259";x.font="800 25px sans-serif";x.fillText("#読み聞かせるねチュゴンくん",540,1280);
+ return await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("image failed")),"image/png"));
+}
+async function getBestBookResultBlob(book){
+ if(bestResultBlobCache.has(book.id))return bestResultBlobCache.get(book.id);
+ const promise=createBestBookResultBlob(book).catch(e=>{bestResultBlobCache.delete(book.id);throw e;});
+ bestResultBlobCache.set(book.id,promise);return promise;
+}
+async function saveBestBookImage(id,button){
+ const book=state.books.find(b=>b.id===id);if(!book)return;
+ const original=button?.textContent;if(button){button.disabled=true;button.textContent="🖼️ 作成中…";}
+ try{const blob=await getBestBookResultBlob(book);downloadBlob(blob,`chugon-best-${book.rating}of10-${book.id}.png`);toast("最高評価絵本の画像を保存しました！");}
+ catch(_){toast("画像を作成できませんでした");}
+ finally{if(button){button.disabled=false;button.textContent=original||"🖼️ 画像保存";}}
+}
+async function shareBestBookImage(id,button){
+ const book=state.books.find(b=>b.id===id);if(!book)return;
+ const original=button?.textContent;if(button){button.disabled=true;button.textContent="📤 作成中…";}
+ try{
+  const blob=await getBestBookResultBlob(book),file=new File([blob],`chugon-best-${book.rating}of10-${book.id}.png`,{type:"image/png"});
+  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
+   await navigator.share({title:"読み聞かせるね チュゴンくん",text:`現在の最高評価は⭐${book.rating}/10！『${book.title}』`,files:[file]});
+  }else{downloadBlob(blob,file.name);toast("共有に対応していないため画像を保存しました");}
+ }catch(e){if(e?.name!=="AbortError")toast("共有できませんでした");}
+ finally{if(button){button.disabled=false;button.textContent=original||"📤 共有";}}
+}
+
 async function createWeeklyResultBlob(){
  const data=weeklyResultCache;if(!data)throw new Error("result unavailable");
  const c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");
@@ -881,12 +962,14 @@ function nextWeek(){
 }
 
 document.addEventListener("click",e=>{
+ const openDex=e.target.closest("[data-open-itemdex]");if(openDex){openItemDex(openDex.dataset.openItemdex);return;}
  const nav=e.target.closest("[data-nav]");if(nav){show(nav.dataset.nav);return;}
  if(e.target.closest("[data-close-modal]")){closeModal();return;}
  const del=e.target.closest("[data-delete-photo]");if(del){deletePhoto(del.dataset.deletePhoto);return;}
  const rep=e.target.closest("[data-replace-photo]");if(rep){replacePhoto(rep.dataset.replacePhoto);return;}
  const filter=e.target.closest("[data-filter]");if(filter){itemFilter=filter.dataset.filter;renderItems();return;}
  const dexFilter=e.target.closest("[data-dex-filter]");if(dexFilter){itemDexFilter=dexFilter.dataset.dexFilter;renderItemDex();return;}
+ const dexSeenFilter=e.target.closest("[data-dex-seen-filter]");if(dexSeenFilter){itemDexSeenFilter=dexSeenFilter.dataset.dexSeenFilter;renderItemDex();return;}
  const job=e.target.closest("[data-job]");if(job){doJob(Number(job.dataset.job));return;}
  const cp=e.target.closest("[data-create-photo]");if(cp){selectedPhotoId=cp.dataset.createPhoto;createStepItem();return;}
  const ci=e.target.closest("[data-create-item]");if(ci){selectedItemId=Number(ci.dataset.createItem);createConfirm();return;}
@@ -895,6 +978,8 @@ document.addEventListener("click",e=>{
  const rb=e.target.closest("[data-replace-book]");if(rb){replaceBook(rb.dataset.replaceBook);return;}
  const book=e.target.closest("[data-book]");if(book){showBookDetail(book.dataset.book);return;}
  const read=e.target.closest("[data-read-book]");if(read){readBook(read.dataset.readBook);return;}
+ const saveBest=e.target.closest("[data-save-best]");if(saveBest){saveBestBookImage(saveBest.dataset.saveBest,saveBest);return;}
+ const shareBest=e.target.closest("[data-share-best]");if(shareBest){shareBestBookImage(shareBest.dataset.shareBest,shareBest);return;}
  if(e.target.closest("[data-save-week]")){saveWeeklyResultImage();return;}
  if(e.target.closest("[data-share-week]")){shareWeeklyResult();return;}
  if(e.target.closest("[data-next-day]")){nextDay();return;}
