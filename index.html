@@ -212,11 +212,25 @@ function evaluateBook(b){if(!b.character){let rating=Math.max(1,Math.min(5,1+Mat
 function pickComment(score,b){const pools={low:['これ絵本なの？','よくわかんない。おしまい。','写真まちがえた？','これ作ってるとき眠かったでしょ。','ぼく、本屋さんで見てももどす。'],mid:['うーん、ちょっとだけおもしろかった。','タイトルだけは好き！','もうちょっとへんなのがよかった。','ふつうに好き！','このタイトル、おぼえちゃった。'],high:['これ好き！本屋さんにあったら見つける！','へんなのにちゃんとかわいい！','タイトル言うだけでおもしろい！','このキャラ、つぎの本にも出して！','ぼくならこれ、まくらのよこに置く。'],top:['これ売れるよ！ぼく5さいだからわかる！','もう1回！……やっぱ3回！','なんでこんなの思いついたの！？','これ、ぼくの本にする。','天才じゃん。','これ100かい読んで！！！','なんでかわかんないけど、これがいちばん好き！！！']}; const arr=score<=3?pools.low:score<=6?pools.mid:score<=8?pools.high:pools.top; let c=arr[Math.floor(Math.random()*arr.length)]; if(Math.random()<.18) c+=' でも '+b.itemEmoji+' はちょっとずるい。'; return c;}
 function startRead(id){const b=state.books.find(x=>x.id===id); if(!b)return; if(!canSpend(2)){toast('今日はもう読み聞かせる時間がありません');return;} let reread=!!b.rating; if(!reread){const out=evaluateBook(b); b.rating=out.rating; b.comment=out.comment;} spendTime(2); state.daily.reads++; state.weeklyReads++; const currentBest=Math.max(0,...state.books.filter(x=>x.id!==b.id&&x.rating).map(x=>x.rating)); b.newRecord=!reread && b.rating>currentBest; saveState(); showRatingResult(b,reread);}
 function showRatingResult(b,reread){resultContent.innerHTML=`${b.newRecord&&!reread?'<div class="notice success">🎉 NEW RECORD！ 最高評価を更新しました！</div>':''}<div style="font-size:54px">👦</div><p>「…………。」</p><h1 style="font-size:48px;margin:8px">⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><div class="card"><p style="font-size:18px;font-weight:900">👦「${esc(b.comment)}」</p></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':''}<p>🕒 +2時間</p><button class="bigbtn primary" onclick="showScreen('home')">ホームへ</button><button class="ghost" style="margin-top:8px" onclick="showScreen('read')">別の本を読む</button>`; showScreen('result');}
-function restDay(){if(!confirm(`今日はもう休みますか？
-${state.day}日目 ${state.hour}:00 → ${state.day===7?state.week+'週目 結果発表':(state.day+1)+'日目 9:00'}`)) return; if(state.day<7){const summary=`🌙 ${state.day}日目終了
-写真保存 ${state.daily.photos}枚 / ガチャ ${state.daily.gacha}回 / バイト ${state.daily.timey}回 / 新作 ${state.daily.books}冊 / 読み聞かせ ${state.daily.reads}回`; state.day++; state.hour=9; state.timeyUsed=false; state.daily={photos:0,gacha:0,timey:0,books:0,reads:0}; saveState(); alert(summary+'
+function restDay(){
+  if(!confirm(`今日はもう休みますか？
+${state.day}日目 ${state.hour}:00 → ${state.day===7?state.week+'週目 結果発表':(state.day+1)+'日目 9:00'}`)) return;
+  if(state.day<7){
+    const summary=`🌙 ${state.day}日目終了
+写真保存 ${state.daily.photos}枚 / ガチャ ${state.daily.gacha}回 / バイト ${state.daily.timey}回 / 新作 ${state.daily.books}冊 / 読み聞かせ ${state.daily.reads}回`;
+    state.day++;
+    state.hour=9;
+    state.timeyUsed=false;
+    state.daily={photos:0,gacha:0,timey:0,books:0,reads:0};
+    saveState();
+    alert(summary+`
 
-☀️ '+state.day+'日目 9:00'); showScreen('home'); return;} endWeek();}
+☀️ ${state.day}日目 9:00`);
+    showScreen('home');
+    return;
+  }
+  endWeek();
+}
 function endWeek(){const weeklyBooks=state.books.filter(b=>b.week===state.week); const ratedWeekly=weeklyBooks.filter(b=>b.rating); const best=ratedWeekly.length ? ratedWeekly.reduce((a,b)=>b.rating>a.rating?b:a) : null; resultContent.innerHTML=`<h2>🌙 ${state.week}週目 おつかれさま！</h2><div class="summary-grid"><div class="stat">📕 今週つくった本<br><b>${weeklyBooks.length}冊</b></div><div class="stat">👦 読み聞かせ<br><b>${state.weeklyReads}回</b></div><div class="stat">📘 持ちこし写真<br><b>${state.album.length}枚</b></div><div class="stat">📚 持ちこし本棚<br><b>${state.books.length}冊</b></div></div>${best?`<div class="card"><h3>🏆 今週のベスト作品</h3><img class="cover-large" src="${best.cover}"><h2>⭐${best.rating} 『${esc(best.title)}』</h2><p>👦「${esc(best.comment)}」</p></div>`:'<div class="notice" style="margin-top:12px">今週はまだ評価された絵本がありませんでした。</div>'}<div class="notice success">新しい1日目を始めます。<b>アルバムの写真と本棚の絵本は引き継ぎ</b>ます。お金と所持アイテムはリセットされます。</div><button class="bigbtn primary" style="margin-top:12px" onclick="startNextWeek()">☀️ 新しい1週間を始める</button>`; showScreen('result');}
 function startNextWeek(){state.week++; state.day=1; state.hour=9; state.money=1500; state.timeyUsed=false; state.inventory={}; state.daily={photos:0,gacha:0,timey:0,books:0,reads:0}; state.weeklyCreated=[]; state.weeklyReads=0; saveState(); toast('新しい1週間が始まりました！'); showScreen('home');}
 renderAll();
