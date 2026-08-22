@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f6efe3">
+<title>読み聞かせるねチュゴンくん α0.1</title>
+<style>
+:root{
+  --bg:#f6efe3; --paper:#fffaf0; --ink:#3b3028; --muted:#806f63;
+  --accent:#d97757; --accent2:#5e8a71; --line:#e5d7c6;
+  --shadow:0 10px 30px rgba(65,45,30,.10);
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(#f8f2e8,#efe4d5);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans","Yu Gothic",sans-serif}
+button,input{font:inherit}
+button{cursor:pointer}
+.app{max-width:760px;margin:auto;min-height:100vh;padding-bottom:92px}
+.topbar{position:sticky;top:0;z-index:20;background:rgba(255,250,240,.95);backdrop-filter:blur(12px);border-bottom:1px solid var(--line);padding:9px 14px;display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center;font-weight:800}
+.topbar span{background:#fff;border:1px solid var(--line);padding:7px 5px;border-radius:13px}
+.screen{display:none;padding:16px}
+.screen.active{display:block}
+.hero{background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:24px;padding:22px 18px;margin-bottom:15px}
+.title{font-size:clamp(26px,7vw,42px);font-weight:1000;line-height:1.15;margin:0 0 14px;text-align:center;letter-spacing:.02em}
+.subtitle{line-height:1.8;margin:0;color:#5f5148;font-weight:600}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:20px;padding:15px;margin:12px 0;box-shadow:0 5px 18px rgba(65,45,30,.06)}
+h2{margin:0 0 12px;font-size:21px} h3{margin:0 0 8px}
+.menu{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.menu button,.bigbtn,.ghost,.danger{border:0;border-radius:18px;padding:15px 12px;font-weight:900;min-height:64px}
+.menu button,.bigbtn{background:white;border:1px solid var(--line);color:var(--ink);box-shadow:0 5px 15px rgba(65,45,30,.06)}
+.menu button:active,.bigbtn:active{transform:scale(.985)}
+.bigbtn.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.bigbtn.green{background:var(--accent2);color:white;border-color:var(--accent2)}
+.ghost{background:#fff;border:1px solid var(--line);color:var(--ink)}
+.danger{background:#fff0ef;color:#a13f36;border:1px solid #efc2bd}
+.small{font-size:12px;color:var(--muted);font-weight:700;display:block;margin-top:4px}
+.badge{display:inline-flex;align-items:center;gap:5px;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:900;background:#eee}
+.r-C{background:#eee;color:#555}.r-R{background:#e7f0ff;color:#3468ac}.r-SR{background:#f0e6ff;color:#7a3ca5}.r-SSR{background:#fff1bd;color:#9a6a00}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px}
+.photo,.book,.item{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;position:relative}
+.photo img,.book img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+.book img{aspect-ratio:3/4}
+.photo .meta,.book .meta{padding:8px;font-size:12px;font-weight:800;line-height:1.35}
+.item{padding:12px;text-align:center}
+.item .emoji{font-size:34px}
+.item .name{font-size:12px;font-weight:900;min-height:34px}
+.item .count{font-size:13px;color:var(--muted)}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.row>*{flex:1}
+.stack{display:grid;gap:10px}
+.notice{padding:12px 14px;background:#fff7d9;border:1px solid #ead58c;border-radius:14px;font-weight:800;line-height:1.55}
+.success{background:#edf7ef;border-color:#b8d7bf}
+.muted{color:var(--muted)}
+.center{text-align:center}
+.preview{width:100%;max-height:50vh;object-fit:contain;background:#eee;border-radius:18px;border:1px solid var(--line)}
+input[type=text]{width:100%;border:1px solid var(--line);background:white;border-radius:14px;padding:13px 14px;margin:8px 0}
+input[type=file]{width:100%;padding:12px;background:white;border:1px dashed #c9b9a8;border-radius:14px}
+.jobs{display:grid;gap:10px}.job{padding:16px;border:1px solid var(--line);border-radius:18px;background:white}.job button{width:100%;margin-top:8px}
+.cover-large{width:min(82vw,420px);aspect-ratio:3/4;object-fit:cover;border-radius:20px;border:1px solid var(--line);box-shadow:var(--shadow)}
+.loading{position:fixed;inset:0;z-index:99;background:rgba(35,28,23,.76);display:none;align-items:center;justify-content:center;padding:24px}
+.loading.show{display:flex}.loadingbox{background:var(--paper);border-radius:24px;padding:28px 22px;max-width:420px;width:100%;text-align:center;box-shadow:var(--shadow)}
+.loadingicon{font-size:54px;animation:bob 1s ease-in-out infinite alternate}@keyframes bob{to{transform:translateY(-8px)}}
+.toast{position:fixed;left:50%;bottom:24px;z-index:120;transform:translateX(-50%) translateY(30px);opacity:0;background:#302820;color:white;padding:12px 16px;border-radius:14px;font-weight:900;transition:.25s;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.section-title{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.chipbar{display:flex;gap:7px;overflow:auto;padding-bottom:4px}
+.chip{white-space:nowrap;border:1px solid var(--line);background:#fff;border-radius:999px;padding:8px 12px;font-weight:900}
+.chip.active{background:#3b3028;color:#fff}
+.empty{padding:28px 12px;text-align:center;color:var(--muted);font-weight:800}
+.statline{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}.stat{background:#fff;border:1px solid var(--line);border-radius:14px;padding:10px;text-align:center}
+.best{display:grid;grid-template-columns:95px 1fr;gap:12px;align-items:center}.best img{width:95px;aspect-ratio:3/4;object-fit:cover;border-radius:12px}
+.footer-note{font-size:11px;color:var(--muted);line-height:1.55;margin-top:12px}
+@media(max-width:430px){.menu{grid-template-columns:1fr 1fr}.grid{grid-template-columns:repeat(3,1fr)}.title{font-size:30px}}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <span id="topDay">📅 1日目</span>
+    <span id="topTime">🕘 9:00</span>
+    <span id="topMoney">💰 1,500円</span>
+  </div>
+
+  <main id="home" class="screen active">
+    <div class="hero">
+      <h1 class="title">📖 読み聞かせるね<br>チュゴンくん</h1>
+      <p class="subtitle">あなたは新人絵本作家。<br>アイデアを絞り出して売れる絵本を模索中。<br>我が子のチュゴンくん（5歳）に作った絵本を読み聞かせて、君の作品が売れるかどうか判断しよう！</p>
+    </div>
+
+    <div class="card">
+      <h2>🎨 遊び方</h2>
+      <div class="menu">
+        <button onclick="openCamera()">📸 写真を撮る<span class="small">好きなだけ撮影</span></button>
+        <button onclick="showScreen('album')">📘 アルバム<span class="small" id="albumCount">0 / 9</span></button>
+        <button onclick="showScreen('gacha')">🎰 ガチャガチャ<span class="small">1回 500円</span></button>
+        <button onclick="showScreen('items')">🎒 所持アイテム<span class="small" id="itemCount">0種類</span></button>
+        <button onclick="showTimey()">🏃 タイミー<span class="small" id="timeyState">本日あと1回</span></button>
+        <button onclick="showCreate()">🖋️ 絵本作成<span class="small">写真＋アイテム</span></button>
+        <button onclick="showScreen('shelf')">📚 本棚<span class="small" id="shelfCount">0 / 10冊</span></button>
+        <button onclick="showRead()">👦 読み聞かせる<span class="small">チュゴンくんが評価</span></button>
+      </div>
+      <button class="bigbtn" style="width:100%;margin-top:10px" onclick="restDay()">🛏️ 今日はもう休む</button>
+    </div>
+
+    <div class="card" id="bestCard">
+      <h2>🏆 現在の最高評価絵本</h2>
+      <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
+    </div>
+    <div class="footer-note">α0.1：写真認識・AI表紙生成・AIコメントはまだ仮実装です。ゲームループ確認用として、写真保存時に主人公名を手入力し、表紙は端末内で自動合成します。</div>
+  </main>
+
+  <main id="camera" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>📸 写真を撮る</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <input id="cameraInput" type="file" accept="image/*" capture="environment">
+      <div id="captureArea" style="display:none;margin-top:12px">
+        <img id="capturePreview" class="preview" alt="撮影プレビュー">
+        <label><b>仮AIの主人公判定</b><span class="small">例：しろもふネコ／メガネのおじさん。空欄なら「主役判定失敗」として保存できます。</span></label>
+        <input id="characterName" type="text" maxlength="30" placeholder="主人公の呼び名">
+        <div class="row">
+          <button class="bigbtn primary" onclick="saveCapturedPhoto()">📘 アルバムに保存</button>
+          <button class="ghost" onclick="discardCapture()">保存しない</button>
+        </div>
+      </div>
+      <div class="notice" style="margin-top:12px">写真を撮るだけなら時間は進みません。アルバムへ保存すると +1時間です。</div>
+    </div>
+  </main>
+
+  <main id="album" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>📘 アルバム <span id="albumHeadCount"></span></h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div id="albumGrid" class="grid"></div>
+    </div>
+  </main>
+
+  <main id="gacha" class="screen">
+    <div class="card center">
+      <div class="section-title"><h2>🎰 ガチャガチャ</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div style="font-size:64px;margin:18px">🎰</div>
+      <h3>1回 500円</h3>
+      <p class="muted">C 60% / R 28% / SR 10% / SSR 2%</p>
+      <button class="bigbtn primary" onclick="pullGacha()">500円で回す！</button>
+      <div id="gachaResult" style="margin-top:16px"></div>
+    </div>
+  </main>
+
+  <main id="items" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>🎒 所持アイテム</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div class="chipbar" id="itemFilters"></div>
+      <p class="muted" id="dexProgress"></p>
+      <div id="itemsGrid" class="grid"></div>
+    </div>
+  </main>
+
+  <main id="timey" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>🏃 タイミー</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <p class="muted">1日1回。長く働くほど高い報酬を狙えます。</p>
+      <div id="jobs" class="jobs"></div>
+    </div>
+  </main>
+
+  <main id="create" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>🖋️ 絵本作成</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div id="createContent"></div>
+    </div>
+  </main>
+
+  <main id="shelf" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>📚 本棚 <span id="shelfHeadCount"></span></h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div id="shelfGrid" class="grid"></div>
+    </div>
+  </main>
+
+  <main id="read" class="screen">
+    <div class="card">
+      <div class="section-title"><h2>👦 読み聞かせる</h2><button class="ghost" onclick="showScreen('home')">← ホーム</button></div>
+      <div id="readContent"></div>
+    </div>
+  </main>
+
+  <main id="result" class="screen">
+    <div class="card center" id="resultContent"></div>
+  </main>
+</div>
+
+<div id="loading" class="loading"><div class="loadingbox"><div id="loadingIcon" class="loadingicon">🖋️</div><h2 id="loadingText">絵本を執筆中…</h2><p class="muted">チュゴンくんが待っています</p></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+const ITEMS = [{"id": 1, "emoji": "🍎", "name": "まっかなリンゴ", "rarity": "C"}, {"id": 2, "emoji": "🍌", "name": "バナナ", "rarity": "C"}, {"id": 3, "emoji": "🍓", "name": "いちご", "rarity": "C"}, {"id": 4, "emoji": "🍉", "name": "大きなスイカ", "rarity": "C"}, {"id": 5, "emoji": "🍇", "name": "ぶどう", "rarity": "C"}, {"id": 6, "emoji": "🍙", "name": "おにぎり", "rarity": "C"}, {"id": 7, "emoji": "🍞", "name": "焼きたてパン", "rarity": "C"}, {"id": 8, "emoji": "🍰", "name": "ショートケーキ", "rarity": "C"}, {"id": 9, "emoji": "🍮", "name": "プリン", "rarity": "C"}, {"id": 10, "emoji": "🍦", "name": "ソフトクリーム", "rarity": "C"}, {"id": 11, "emoji": "🧸", "name": "くまのぬいぐるみ", "rarity": "C"}, {"id": 12, "emoji": "🪀", "name": "ヨーヨー", "rarity": "C"}, {"id": 13, "emoji": "🪁", "name": "空飛ぶたこ", "rarity": "C"}, {"id": 14, "emoji": "🎈", "name": "赤い風船", "rarity": "C"}, {"id": 15, "emoji": "🧩", "name": "ふしぎなパズル", "rarity": "R"}, {"id": 16, "emoji": "🎨", "name": "お絵かきセット", "rarity": "C"}, {"id": 17, "emoji": "🖍️", "name": "魔法のクレヨン", "rarity": "R"}, {"id": 18, "emoji": "🎲", "name": "サイコロ", "rarity": "C"}, {"id": 19, "emoji": "🪄", "name": "魔法のステッキ", "rarity": "SR"}, {"id": 20, "emoji": "🎁", "name": "ひみつのプレゼント", "rarity": "R"}, {"id": 21, "emoji": "👑", "name": "王さまの冠", "rarity": "SR"}, {"id": 22, "emoji": "💎", "name": "伝説の宝石", "rarity": "SR"}, {"id": 23, "emoji": "🗝️", "name": "金色のカギ", "rarity": "SR"}, {"id": 24, "emoji": "🏰", "name": "小さなお城", "rarity": "SR"}, {"id": 25, "emoji": "🧙", "name": "魔法使いの帽子", "rarity": "SR"}, {"id": 26, "emoji": "🧹", "name": "空飛ぶほうき", "rarity": "SR"}, {"id": 27, "emoji": "🪽", "name": "天使の羽", "rarity": "SR"}, {"id": 28, "emoji": "🔮", "name": "未来が見える水晶", "rarity": "SSR"}, {"id": 29, "emoji": "🧞", "name": "魔法のランプ", "rarity": "SSR"}, {"id": 30, "emoji": "⚔️", "name": "勇者の剣", "rarity": "SR"}, {"id": 31, "emoji": "🚗", "name": "赤い自動車", "rarity": "C"}, {"id": 32, "emoji": "🚕", "name": "黄色いタクシー", "rarity": "C"}, {"id": 33, "emoji": "🚌", "name": "大きなバス", "rarity": "C"}, {"id": 34, "emoji": "🚲", "name": "自転車", "rarity": "C"}, {"id": 35, "emoji": "🛵", "name": "スクーター", "rarity": "C"}, {"id": 36, "emoji": "🚂", "name": "蒸気機関車", "rarity": "C"}, {"id": 37, "emoji": "✈️", "name": "飛行機", "rarity": "C"}, {"id": 38, "emoji": "🚁", "name": "ヘリコプター", "rarity": "C"}, {"id": 39, "emoji": "🚀", "name": "ロケット", "rarity": "SR"}, {"id": 40, "emoji": "🛸", "name": "UFO", "rarity": "SSR"}, {"id": 41, "emoji": "🌈", "name": "虹", "rarity": "SR"}, {"id": 42, "emoji": "☁️", "name": "ふわふわ雲", "rarity": "C"}, {"id": 43, "emoji": "⭐", "name": "お星さま", "rarity": "R"}, {"id": 44, "emoji": "🌙", "name": "お月さま", "rarity": "SR"}, {"id": 45, "emoji": "☀️", "name": "おひさま", "rarity": "C"}, {"id": 46, "emoji": "🌋", "name": "火山", "rarity": "R"}, {"id": 47, "emoji": "🏝️", "name": "無人島", "rarity": "R"}, {"id": 48, "emoji": "🌊", "name": "大きな波", "rarity": "R"}, {"id": 49, "emoji": "🌲", "name": "不思議な木", "rarity": "R"}, {"id": 50, "emoji": "🍄", "name": "巨大キノコ", "rarity": "SR"}, {"id": 51, "emoji": "👻", "name": "おばけ", "rarity": "R"}, {"id": 52, "emoji": "💀", "name": "ガイコツ", "rarity": "R"}, {"id": 53, "emoji": "🧟", "name": "ゾンビ", "rarity": "R"}, {"id": 54, "emoji": "👽", "name": "宇宙人", "rarity": "SR"}, {"id": 55, "emoji": "🤖", "name": "ロボット", "rarity": "SR"}, {"id": 56, "emoji": "👹", "name": "鬼のお面", "rarity": "R"}, {"id": 57, "emoji": "🎃", "name": "ハロウィンかぼちゃ", "rarity": "R"}, {"id": 58, "emoji": "🕷️", "name": "巨大クモ", "rarity": "R"}, {"id": 59, "emoji": "🦇", "name": "コウモリ", "rarity": "R"}, {"id": 60, "emoji": "🪦", "name": "あやしいお墓", "rarity": "R"}, {"id": 61, "emoji": "🎩", "name": "シルクハット", "rarity": "C"}, {"id": 62, "emoji": "🧢", "name": "青い帽子", "rarity": "C"}, {"id": 63, "emoji": "👓", "name": "大きなメガネ", "rarity": "C"}, {"id": 64, "emoji": "🕶️", "name": "サングラス", "rarity": "C"}, {"id": 65, "emoji": "👔", "name": "ネクタイ", "rarity": "C"}, {"id": 66, "emoji": "👗", "name": "お姫さまドレス", "rarity": "C"}, {"id": 67, "emoji": "👟", "name": "ものすごく速い靴", "rarity": "SR"}, {"id": 68, "emoji": "🥾", "name": "冒険ブーツ", "rarity": "C"}, {"id": 69, "emoji": "🧣", "name": "長すぎるマフラー", "rarity": "C"}, {"id": 70, "emoji": "🩲", "name": "伝説のパンツ", "rarity": "R"}, {"id": 71, "emoji": "⏰", "name": "目覚まし時計", "rarity": "C"}, {"id": 72, "emoji": "☂️", "name": "大きな傘", "rarity": "C"}, {"id": 73, "emoji": "🔦", "name": "懐中電灯", "rarity": "C"}, {"id": 74, "emoji": "📺", "name": "テレビ", "rarity": "C"}, {"id": 75, "emoji": "📱", "name": "スマートフォン", "rarity": "C"}, {"id": 76, "emoji": "📷", "name": "カメラ", "rarity": "C"}, {"id": 77, "emoji": "🪞", "name": "魔法の鏡", "rarity": "SR"}, {"id": 78, "emoji": "🛏️", "name": "ふかふかベッド", "rarity": "C"}, {"id": 79, "emoji": "🛁", "name": "お風呂", "rarity": "C"}, {"id": 80, "emoji": "🚽", "name": "トイレ", "rarity": "C"}, {"id": 81, "emoji": "🎸", "name": "ギター", "rarity": "C"}, {"id": 82, "emoji": "🎺", "name": "トランペット", "rarity": "C"}, {"id": 83, "emoji": "🥁", "name": "太鼓", "rarity": "C"}, {"id": 84, "emoji": "🎤", "name": "マイク", "rarity": "C"}, {"id": 85, "emoji": "🎪", "name": "サーカステント", "rarity": "C"}, {"id": 86, "emoji": "🎡", "name": "観覧車", "rarity": "C"}, {"id": 87, "emoji": "🎢", "name": "ジェットコースター", "rarity": "R"}, {"id": 88, "emoji": "🎆", "name": "花火", "rarity": "R"}, {"id": 89, "emoji": "🏆", "name": "金のトロフィー", "rarity": "C"}, {"id": 90, "emoji": "⚽", "name": "サッカーボール", "rarity": "C"}, {"id": 91, "emoji": "💣", "name": "爆弾", "rarity": "R"}, {"id": 92, "emoji": "🧲", "name": "超強力磁石", "rarity": "SR"}, {"id": 93, "emoji": "⏳", "name": "時間を戻す砂時計", "rarity": "SSR"}, {"id": 94, "emoji": "🗺️", "name": "宝の地図", "rarity": "SR"}, {"id": 95, "emoji": "📕", "name": "しゃべる本", "rarity": "SSR"}, {"id": 96, "emoji": "🧪", "name": "あやしい薬", "rarity": "SR"}, {"id": 97, "emoji": "🫧", "name": "巨大シャボン玉", "rarity": "R"}, {"id": 98, "emoji": "🪜", "name": "空まで届くはしご", "rarity": "R"}, {"id": 99, "emoji": "🚪", "name": "どこかにつながる扉", "rarity": "SSR"}, {"id": 100, "emoji": "🥚", "name": "なにかが生まれそうな卵", "rarity": "SSR"}, {"id": 101, "emoji": "🐾", "name": "なぞの足あと", "rarity": "C"}, {"id": 102, "emoji": "🐚", "name": "海から届いた貝がら", "rarity": "C"}, {"id": 103, "emoji": "🪶", "name": "空から落ちてきた羽根", "rarity": "SR"}, {"id": 104, "emoji": "🪺", "name": "ひみつの鳥の巣", "rarity": "C"}, {"id": 105, "emoji": "🪹", "name": "空っぽの巣", "rarity": "R"}, {"id": 106, "emoji": "🐌", "name": "のんびりカタツムリ", "rarity": "C"}, {"id": 107, "emoji": "🦋", "name": "幸せを運ぶチョウ", "rarity": "SR"}, {"id": 108, "emoji": "🐝", "name": "はたらきもののハチ", "rarity": "C"}, {"id": 109, "emoji": "🪲", "name": "ピカピカのカブトムシ", "rarity": "C"}, {"id": 110, "emoji": "🐞", "name": "幸運のてんとう虫", "rarity": "C"}, {"id": 111, "emoji": "🌸", "name": "満開のさくら", "rarity": "C"}, {"id": 112, "emoji": "🌻", "name": "大きなひまわり", "rarity": "C"}, {"id": 113, "emoji": "🌹", "name": "真っ赤なバラ", "rarity": "C"}, {"id": 114, "emoji": "🌷", "name": "春色のチューリップ", "rarity": "C"}, {"id": 115, "emoji": "🪻", "name": "いい香りの花", "rarity": "C"}, {"id": 116, "emoji": "🌱", "name": "小さな芽", "rarity": "C"}, {"id": 117, "emoji": "🌵", "name": "トゲトゲサボテン", "rarity": "C"}, {"id": 118, "emoji": "🎋", "name": "願いごとの笹", "rarity": "R"}, {"id": 119, "emoji": "🍀", "name": "四つ葉のクローバー", "rarity": "SR"}, {"id": 120, "emoji": "🍁", "name": "空飛ぶもみじ", "rarity": "C"}, {"id": 121, "emoji": "🍕", "name": "巨大ピザ", "rarity": "C"}, {"id": 122, "emoji": "🍔", "name": "特大ハンバーガー", "rarity": "C"}, {"id": 123, "emoji": "🍟", "name": "山盛りポテト", "rarity": "C"}, {"id": 124, "emoji": "🌭", "name": "なが〜いホットドッグ", "rarity": "C"}, {"id": 125, "emoji": "🥪", "name": "具だくさんサンドイッチ", "rarity": "C"}, {"id": 126, "emoji": "🥞", "name": "ふわふわパンケーキ", "rarity": "C"}, {"id": 127, "emoji": "🧇", "name": "サクサクワッフル", "rarity": "C"}, {"id": 128, "emoji": "🍩", "name": "虹色ドーナツ", "rarity": "R"}, {"id": 129, "emoji": "🍪", "name": "魔法のクッキー", "rarity": "SR"}, {"id": 130, "emoji": "🧁", "name": "小さなカップケーキ", "rarity": "C"}, {"id": 131, "emoji": "🍚", "name": "ほかほかごはん", "rarity": "C"}, {"id": 132, "emoji": "🍛", "name": "不思議なカレー", "rarity": "R"}, {"id": 133, "emoji": "🍜", "name": "なが〜いラーメン", "rarity": "C"}, {"id": 134, "emoji": "🍝", "name": "空飛ぶスパゲッティ", "rarity": "R"}, {"id": 135, "emoji": "🍣", "name": "回転するおすし", "rarity": "R"}, {"id": 136, "emoji": "🍤", "name": "大きなエビフライ", "rarity": "C"}, {"id": 137, "emoji": "🍳", "name": "踊る目玉焼き", "rarity": "R"}, {"id": 138, "emoji": "🧀", "name": "穴だらけのチーズ", "rarity": "C"}, {"id": 139, "emoji": "🥐", "name": "三日月クロワッサン", "rarity": "C"}, {"id": 140, "emoji": "🥨", "name": "ぐるぐるプレッツェル", "rarity": "C"}, {"id": 141, "emoji": "🍬", "name": "カラフルキャンディ", "rarity": "C"}, {"id": 142, "emoji": "🍭", "name": "巨大ペロペロキャンディ", "rarity": "C"}, {"id": 143, "emoji": "🍫", "name": "とけないチョコレート", "rarity": "SR"}, {"id": 144, "emoji": "🍯", "name": "黄金のはちみつ", "rarity": "C"}, {"id": 145, "emoji": "🧋", "name": "タピオカドリンク", "rarity": "C"}, {"id": 146, "emoji": "🥤", "name": "しゅわしゅわジュース", "rarity": "C"}, {"id": 147, "emoji": "🧃", "name": "ふしぎなフルーツジュース", "rarity": "C"}, {"id": 148, "emoji": "☕", "name": "空飛ぶコーヒーカップ", "rarity": "C"}, {"id": 149, "emoji": "🫖", "name": "しゃべるティーポット", "rarity": "R"}, {"id": 150, "emoji": "🥛", "name": "まっ白なミルク", "rarity": "C"}, {"id": 151, "emoji": "🏡", "name": "森の小さなおうち", "rarity": "R"}, {"id": 152, "emoji": "🏕️", "name": "星の見えるテント", "rarity": "C"}, {"id": 153, "emoji": "⛺", "name": "冒険キャンプ", "rarity": "C"}, {"id": 154, "emoji": "🛖", "name": "山奥の秘密基地", "rarity": "R"}, {"id": 155, "emoji": "🏫", "name": "夜だけ開く学校", "rarity": "R"}, {"id": 156, "emoji": "🏥", "name": "動物たちの病院", "rarity": "C"}, {"id": 157, "emoji": "🏨", "name": "不思議なホテル", "rarity": "R"}, {"id": 158, "emoji": "🏪", "name": "なんでも売ってるお店", "rarity": "R"}, {"id": 159, "emoji": "🎠", "name": "魔法のメリーゴーラウンド", "rarity": "R"}, {"id": 160, "emoji": "⛲", "name": "願いが叶う噴水", "rarity": "SR"}, {"id": 161, "emoji": "🗻", "name": "雲の上まで続く山", "rarity": "R"}, {"id": 162, "emoji": "🏔️", "name": "雪だらけの山", "rarity": "C"}, {"id": 163, "emoji": "🏜️", "name": "金色の砂漠", "rarity": "C"}, {"id": 164, "emoji": "🏖️", "name": "宝物が眠るビーチ", "rarity": "C"}, {"id": 165, "emoji": "🏞️", "name": "虹がかかる谷", "rarity": "R"}, {"id": 166, "emoji": "🌌", "name": "星空の世界", "rarity": "SSR"}, {"id": 167, "emoji": "🌃", "name": "光る夜の街", "rarity": "R"}, {"id": 168, "emoji": "🌁", "name": "霧に隠れた町", "rarity": "R"}, {"id": 169, "emoji": "🌉", "name": "夜空に浮かぶ橋", "rarity": "R"}, {"id": 170, "emoji": "🗼", "name": "空まで届くタワー", "rarity": "R"}, {"id": 171, "emoji": "🧰", "name": "なんでも直せる工具箱", "rarity": "SR"}, {"id": 172, "emoji": "🔧", "name": "魔法のスパナ", "rarity": "R"}, {"id": 173, "emoji": "🔨", "name": "大工さんのハンマー", "rarity": "C"}, {"id": 174, "emoji": "🪛", "name": "小さなドライバー", "rarity": "C"}, {"id": 175, "emoji": "🧹", "name": "勝手に掃除するほうき", "rarity": "R"}, {"id": 176, "emoji": "🪣", "name": "水がなくならないバケツ", "rarity": "R"}, {"id": 177, "emoji": "🧽", "name": "なんでもピカピカスポンジ", "rarity": "R"}, {"id": 178, "emoji": "🪥", "name": "巨大歯ブラシ", "rarity": "C"}, {"id": 179, "emoji": "🧴", "name": "香りが変わるボトル", "rarity": "R"}, {"id": 180, "emoji": "🧻", "name": "終わらないトイレットペーパー", "rarity": "R"}, {"id": 181, "emoji": "✏️", "name": "なんでも描けるえんぴつ", "rarity": "R"}, {"id": 182, "emoji": "🖊️", "name": "勝手に物語を書くペン", "rarity": "SR"}, {"id": 183, "emoji": "📏", "name": "どこまでも伸びる定規", "rarity": "R"}, {"id": 184, "emoji": "✂️", "name": "紙だけ切れる不思議なハサミ", "rarity": "C"}, {"id": 185, "emoji": "📐", "name": "三角の秘密道具", "rarity": "R"}, {"id": 186, "emoji": "📎", "name": "巨大クリップ", "rarity": "C"}, {"id": 187, "emoji": "📌", "name": "空を飛ぶ画びょう", "rarity": "R"}, {"id": 188, "emoji": "🗒️", "name": "未来が書いてあるメモ帳", "rarity": "SR"}, {"id": 189, "emoji": "📓", "name": "思い出が増えるノート", "rarity": "R"}, {"id": 190, "emoji": "📚", "name": "夜になると動き出す本", "rarity": "SR"}, {"id": 191, "emoji": "🎂", "name": "ろうそく100本のケーキ", "rarity": "R"}, {"id": 192, "emoji": "🕯️", "name": "消えないろうそく", "rarity": "R"}, {"id": 193, "emoji": "🪩", "name": "踊りだすミラーボール", "rarity": "R"}, {"id": 194, "emoji": "🎐", "name": "願いを運ぶ風鈴", "rarity": "R"}, {"id": 195, "emoji": "🧿", "name": "見守ってくれるお守り", "rarity": "R"}, {"id": 196, "emoji": "🪬", "name": "不思議な魔除け", "rarity": "R"}, {"id": 197, "emoji": "🏮", "name": "夜道を照らすちょうちん", "rarity": "C"}, {"id": 198, "emoji": "🎀", "name": "ほどけないリボン", "rarity": "R"}, {"id": 199, "emoji": "🪄", "name": "願いを1つかなえる杖", "rarity": "SSR"}, {"id": 200, "emoji": "🧳", "name": "なんでも入る旅行かばん", "rarity": "SSR"}];
+const SAVE_KEY = "chugon_reading_alpha01_v1";
+const rarityRate = [{r:"SSR",p:2},{r:"SR",p:10},{r:"R",p:28},{r:"C",p:60}];
+const jobsMaster = [
+  {emoji:"🐶",name:"ペットショップのお手伝い",hours:4,min:1000,max:1800,text:"ワンちゃんに好かれすぎて休憩まで遊んでしまった。"},
+  {emoji:"🍰",name:"ケーキ屋さん",hours:5,min:1500,max:2500,text:"クリームを見すぎて帰るころには甘いものが見たくなくなった。"},
+  {emoji:"📦",name:"引っ越しスタッフ",hours:6,min:2000,max:3000,text:"冷蔵庫が想像の3倍くらい重かった。"},
+  {emoji:"🍜",name:"ラーメン屋の皿洗い",hours:5,min:1400,max:2400,text:"どんぶりが無限に出てきた。"},
+  {emoji:"🎪",name:"イベント会場スタッフ",hours:6,min:1800,max:3000,text:"着ぐるみに道を聞かれた。"},
+  {emoji:"📚",name:"本屋さんの品出し",hours:4,min:1100,max:1900,text:"絵本コーナーだけ仕事が遅くなった。"}
+];
+const defaultState = {
+  day:1,hour:9,money:1500,timeyUsed:false,album:[],inventory:{},seen:{},books:[],bestBookId:null,
+  daily:{photos:0,gacha:0,timey:0,books:0,reads:0}
+};
+let state = loadState();
+let capturedData = null;
+let pendingPhoto = null;
+let createPhotoId = null;
+let createItemId = null;
+let itemFilter = "ALL";
+
+function loadState(){
+  try{
+    const x=JSON.parse(localStorage.getItem(SAVE_KEY));
+    return x ? Object.assign(structuredClone(defaultState),x) : structuredClone(defaultState);
+  }catch(e){ return structuredClone(defaultState); }
+}
+function saveState(){ localStorage.setItem(SAVE_KEY,JSON.stringify(state)); renderAll(); }
+function money(n){ return n.toLocaleString("ja-JP")+"円"; }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,8); }
+function itemById(id){ return ITEMS.find(x=>x.id===Number(id)); }
+function toast(msg){ const t=document.getElementById("toast");t.textContent=msg;t.classList.add("show");setTimeout(()=>t.classList.remove("show"),1800); }
+function canSpend(hours){ return state.hour + hours <= 21; }
+function spendTime(hours){
+  if(!canSpend(hours)) return false;
+  state.hour += hours;
+  return true;
+}
+function showScreen(id){
+  document.querySelectorAll(".screen").forEach(x=>x.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+  window.scrollTo({top:0,behavior:"smooth"});
+  renderAll();
+}
+function renderTop(){
+  topDay.textContent=`📅 ${state.day}日目`;
+  topTime.textContent=`🕘 ${state.hour}:00`;
+  topMoney.textContent=`💰 ${money(state.money)}`;
+}
+function renderHome(){
+  albumCount.textContent=`${state.album.length} / 9`;
+  shelfCount.textContent=`${state.books.length} / 10冊`;
+  const ownedKinds=Object.values(state.inventory).filter(v=>v>0).length;
+  itemCount.textContent=`${ownedKinds}種類`;
+  timeyState.textContent=state.timeyUsed?"本日は勤務済み":"本日あと1回";
+  const rated=state.books.filter(b=>b.rating);
+  if(!rated.length){ bestContent.innerHTML='<div class="empty">まだ評価された絵本はありません。</div>'; return; }
+  let best=rated.reduce((a,b)=>b.rating>a.rating?b:a);
+  bestContent.innerHTML=`<div class="best"><img src="${best.cover}"><div><div style="font-size:20px;font-weight:1000">⭐${best.rating} / 10</div><div style="font-weight:1000;margin:5px 0">『${esc(best.title)}』</div><div class="muted">👦「${esc(best.comment)}」</div></div></div>`;
+}
+function renderAlbum(){
+  albumHeadCount.textContent=`${state.album.length}/9`;
+  if(!state.album.length){ albumGrid.innerHTML='<div class="empty" style="grid-column:1/-1">まだ写真がありません。📸</div>'; return; }
+  albumGrid.innerHTML=state.album.map(p=>`<div class="photo"><img src="${p.data}"><div class="meta">${p.character?`🎭 ${esc(p.character)}`:"❓ 主役不明"}<br><span class="muted">${p.day}日目</span><br><button class="danger" style="padding:6px 8px;min-height:auto;margin-top:6px" onclick="deletePhoto('${p.id}')">削除</button></div></div>`).join("");
+}
+function renderItems(){
+  const filters=["ALL","C","R","SR","SSR"];
+  itemFilters.innerHTML=filters.map(f=>`<button class="chip ${itemFilter===f?"active":""}" onclick="setItemFilter('${f}')">${f==="ALL"?"すべて":f}</button>`).join("");
+  dexProgress.textContent=`入手済み ${Object.keys(state.seen).length} / 200`;
+  const list=ITEMS.filter(it=>(state.inventory[it.id]||0)>0 && (itemFilter==="ALL"||it.rarity===itemFilter));
+  itemsGrid.innerHTML=list.length?list.map(it=>`<div class="item"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">×${state.inventory[it.id]}</div></div>`).join(""):'<div class="empty" style="grid-column:1/-1">この条件のアイテムはありません。</div>';
+}
+function renderShelf(){
+  shelfHeadCount.textContent=`${state.books.length}/10`;
+  if(!state.books.length){ shelfGrid.innerHTML='<div class="empty" style="grid-column:1/-1">まだ絵本がありません。🖋️</div>';return;}
+  shelfGrid.innerHTML=state.books.map(b=>`<div class="book" onclick="bookDetail('${b.id}')"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${b.day}日目</span></div></div>`).join("");
+}
+function renderAll(){ renderTop();renderHome();renderAlbum();renderItems();renderShelf(); }
+
+function openCamera(){ showScreen("camera"); }
+cameraInput.addEventListener("change",async e=>{
+  const file=e.target.files[0]; if(!file)return;
+  capturedData=await compressImage(file,650,.78);
+  capturePreview.src=capturedData; captureArea.style.display="block"; characterName.value="";
+});
+function compressImage(file,max=650,quality=.78){
+  return new Promise((resolve,reject)=>{
+    const fr=new FileReader();fr.onload=()=>{
+      const img=new Image();img.onload=()=>{
+        let w=img.width,h=img.height;const scale=Math.min(1,max/Math.max(w,h));w=Math.round(w*scale);h=Math.round(h*scale);
+        const c=document.createElement("canvas");c.width=w;c.height=h;const ctx=c.getContext("2d");ctx.drawImage(img,0,0,w,h);
+        resolve(c.toDataURL("image/jpeg",quality));
+      };img.onerror=reject;img.src=fr.result;
+    };fr.onerror=reject;fr.readAsDataURL(file);
+  });
+}
+function discardCapture(){ capturedData=null;cameraInput.value="";captureArea.style.display="none";toast("保存しませんでした"); }
+function saveCapturedPhoto(){
+  if(!capturedData)return;
+  if(!canSpend(1)){ toast("今日はもう写真を保存する時間がありません");return; }
+  const photo={id:uid(),data:capturedData,character:characterName.value.trim(),day:state.day};
+  if(state.album.length<9){ commitPhoto(photo); }
+  else{
+    pendingPhoto=photo;
+    albumGrid.innerHTML=state.album.map(p=>`<div class="photo"><img src="${p.data}"><div class="meta">${p.character?esc(p.character):"❓ 主役不明"}<br><button class="danger" style="padding:6px" onclick="replacePhoto('${p.id}')">この写真と交換</button></div></div>`).join("");
+    showScreen("album");toast("アルバムが満杯です。交換する1枚を選んでください");
+  }
+}
+function commitPhoto(photo){
+  state.album.push(photo);spendTime(1);state.daily.photos++;saveState();discardCapture();showScreen("album");toast("📘 保存しました。+1時間");
+}
+function replacePhoto(id){
+  if(!pendingPhoto)return;
+  const idx=state.album.findIndex(p=>p.id===id);if(idx<0)return;
+  state.album[idx]=pendingPhoto;pendingPhoto=null;spendTime(1);state.daily.photos++;saveState();discardCapture();showScreen("album");toast("写真を入れ替えました。+1時間");
+}
+function deletePhoto(id){
+  if(state.books.some(b=>b.photoId===id) && !confirm("この写真を元に作った絵本があります。アルバムから削除しても絵本は残ります。削除しますか？")) return;
+  state.album=state.album.filter(p=>p.id!==id);saveState();
+}
+function setItemFilter(f){ itemFilter=f;renderItems(); }
+
+function pullGacha(){
+  if(state.money<500){toast("お金が足りません");return;}
+  if(!canSpend(1)){toast("今日はもうガチャを回す時間がありません");return;}
+  state.money-=500;spendTime(1);state.daily.gacha++;
+  const r=Math.random()*100;let rarity=r<2?"SSR":r<12?"SR":r<40?"R":"C";
+  const pool=ITEMS.filter(x=>x.rarity===rarity);const it=pool[Math.floor(Math.random()*pool.length)];
+  const isNew=!state.seen[it.id];state.inventory[it.id]=(state.inventory[it.id]||0)+1;state.seen[it.id]=true;
+  saveState();
+  gachaResult.innerHTML=`<div class="card"><span class="badge r-${it.rarity}">${it.rarity}</span>${isNew?'<span class="badge" style="background:#ffe4a8;margin-left:6px">NEW!</span>':""}<div style="font-size:72px">${it.emoji}</div><h2>${esc(it.name)}</h2><div class="muted">所持 ×${state.inventory[it.id]}</div></div>`;
+}
+function showTimey(){
+  showScreen("timey");
+  if(state.timeyUsed){jobs.innerHTML='<div class="notice">今日はもう働きました。翌日になるとまた働けます。</div>';return;}
+  const picks=[...jobsMaster].sort(()=>Math.random()-.5).slice(0,3);
+  jobs.innerHTML=picks.map((j,i)=>`<div class="job"><h3>${j.emoji} ${j.name}</h3><div>⏰ ${j.hours}時間　💰 ${money(j.min)}〜${money(j.max)}</div><button class="bigbtn green" ${canSpend(j.hours)?"":'disabled style="opacity:.45"'} onclick='doJob(${JSON.stringify(j)})'>このバイトを選ぶ</button>${canSpend(j.hours)?"":'<span class="small">今日はもう勤務時間が足りません</span>'}</div>`).join("");
+}
+function doJob(j){
+  if(state.timeyUsed||!canSpend(j.hours))return;
+  const pay=Math.floor((j.min+Math.random()*(j.max-j.min+1))/100)*100;
+  state.money+=pay;spendTime(j.hours);state.timeyUsed=true;state.daily.timey++;saveState();
+  jobs.innerHTML=`<div class="card center"><div style="font-size:60px">${j.emoji}</div><h2>${esc(j.name)} 終了！</h2><p>${esc(j.text)}</p><h2>💰 ${money(pay)} GET！</h2><p>🕒 ${j.hours}時間経過</p><button class="bigbtn" onclick="showScreen('home')">ホームへ</button></div>`;
+}
+function showCreate(){
+  showScreen("create");createPhotoId=null;createItemId=null;
+  if(!state.album.length){createContent.innerHTML='<div class="notice">まずアルバムに写真を保存してください。</div>';return;}
+  if(!Object.values(state.inventory).some(v=>v>0)){createContent.innerHTML='<div class="notice">使えるアイテムがありません。ガチャを回してみよう！</div>';return;}
+  if(!canSpend(2)){createContent.innerHTML='<div class="notice">今日はもう絵本を作る時間がありません。</div>';return;}
+  renderCreateStep1();
+}
+function renderCreateStep1(){
+  createContent.innerHTML=`<h3>STEP 1　📘 主人公の写真を選ぶ</h3><div class="grid">${state.album.map(p=>`<div class="photo" onclick="selectCreatePhoto('${p.id}')"><img src="${p.data}"><div class="meta">${p.character?`🎭 ${esc(p.character)}`:"❓ 主役不明"}</div></div>`).join("")}</div>`;
+}
+function selectCreatePhoto(id){ createPhotoId=id;renderCreateStep2(); }
+function renderCreateStep2(){
+  const owned=ITEMS.filter(it=>(state.inventory[it.id]||0)>0);
+  createContent.innerHTML=`<h3>STEP 2　🎒 アイテムを1つ選ぶ</h3><div class="grid">${owned.map(it=>`<div class="item" onclick="selectCreateItem(${it.id})"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">×${state.inventory[it.id]}</div></div>`).join("")}</div><button class="ghost" style="margin-top:12px" onclick="renderCreateStep1()">← 写真を選び直す</button>`;
+}
+function selectCreateItem(id){ createItemId=id;renderCreateConfirm(); }
+function renderCreateConfirm(){
+  const p=state.album.find(x=>x.id===createPhotoId),it=itemById(createItemId);
+  createContent.innerHTML=`<div class="center"><img class="preview" style="max-height:300px" src="${p.data}"><h2>${p.character?esc(p.character):"❓ なぞの主役"} ＋ ${it.emoji} ${esc(it.name)}</h2><p>この組み合わせで絵本を作りますか？</p><button class="bigbtn primary" onclick="createBook()">🖋️ 絵本を作る！</button><button class="ghost" style="margin-top:8px" onclick="renderCreateStep2()">← アイテムを選び直す</button></div>`;
+}
+const titlePatterns = [
+  {kind:"王道",w:45,make:(c,it)=>`${c}と ${it.name}`},
+  {kind:"事件",w:30,make:(c,it)=>`${it.name}で 大へんしんした${c}`},
+  {kind:"クセ強",w:20,make:(c,it)=>`${it.name}のことしか考えない${c}`},
+  {kind:"暴走",w:5,make:(c,it)=>`${c}より先に ${it.name}が帰ってきた`}
+];
+function chooseTitle(c,it){
+  const r=Math.random()*100;let acc=0,pat=titlePatterns[0];
+  for(const p of titlePatterns){acc+=p.w;if(r<acc){pat=p;break;}}
+  let title=pat.make(c,it);
+  if(title.length>28) title=title.slice(0,27)+"…";
+  return {title,kind:pat.kind};
+}
+async function createBook(){
+  if(!canSpend(2))return toast("今日はもう絵本を作る時間がありません");
+  const p=state.album.find(x=>x.id===createPhotoId),it=itemById(createItemId);
+  if(!p||!it||(state.inventory[it.id]||0)<=0)return;
+  const c=p.character||"なぞのキャラ";
+  const made=chooseTitle(c,it);
+  const messages=[["🖋️","絵本を執筆中…"],["💭","物語を考えています…"],["✨","タイトルを決めています…"],["🎨","表紙を描いています…"],["👶","チュゴンくんが楽しみに待っています…"]];
+  loading.classList.add("show");
+  for(const [ic,tx] of messages){loadingIcon.textContent=ic;loadingText.textContent=tx;await wait(520);}
+  const cover=await makeCover(p.data,made.title,it.emoji);
+  loading.classList.remove("show");
+  const book={id:uid(),title:made.title,titleKind:made.kind,cover,photoId:p.id,photoData:p.data,character:p.character,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,day:state.day,rating:null,comment:null};
+  state.inventory[it.id]--;spendTime(2);state.daily.books++;
+  if(state.books.length>=10){
+    window.__pendingBook=book;
+    saveState();
+    showShelfSwap(book);
+    return;
+  }
+  state.books.push(book);saveState();showBookComplete(book);
+}
+function wait(ms){return new Promise(r=>setTimeout(r,ms));}
+function makeCover(photo,title,emoji){
+  return new Promise(resolve=>{
+    const img=new Image();img.onload=()=>{
+      const c=document.createElement("canvas");c.width=600;c.height=800;const ctx=c.getContext("2d");
+      const scale=Math.max(c.width/img.width,c.height/img.height),w=img.width*scale,h=img.height*scale;
+      ctx.drawImage(img,(c.width-w)/2,(c.height-h)/2,w,h);
+      const g=ctx.createLinearGradient(0,0,0,800);g.addColorStop(0,"rgba(0,0,0,.08)");g.addColorStop(.55,"rgba(0,0,0,.08)");g.addColorStop(1,"rgba(0,0,0,.65)");ctx.fillStyle=g;ctx.fillRect(0,0,600,800);
+      ctx.font="86px sans-serif";ctx.textAlign="right";ctx.fillText(emoji,550,115);
+      ctx.fillStyle="white";ctx.strokeStyle="rgba(0,0,0,.45)";ctx.lineWidth=8;ctx.textAlign="center";ctx.font="900 48px sans-serif";
+      wrapText(ctx,title,300,610,500,62);
+      resolve(c.toDataURL("image/jpeg",.82));
+    };img.src=photo;
+  });
+}
+function wrapText(ctx,text,x,y,maxWidth,lineHeight){
+  let line="",lines=[];for(const ch of text){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;}else line=test;}if(line)lines.push(line);
+  const start=y-(lines.length-1)*lineHeight/2;lines.forEach((l,i)=>{ctx.strokeText(l,x,start+i*lineHeight);ctx.fillText(l,x,start+i*lineHeight);});
+}
+function showBookComplete(book){
+  resultContent.innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${book.cover}"><h2>『${esc(book.title)}』</h2><p>📷 ${book.character?esc(book.character):"主役不明"}<br>${book.itemEmoji} ${esc(book.itemName)}<br>📅 ${book.day}日目</p><div class="notice success">使用したアイテムは1個消費されました。🕒 +2時間</div><button class="bigbtn primary" style="margin-top:12px" onclick="showScreen('shelf')">📚 本棚を見る</button><button class="ghost" style="margin-top:8px" onclick="showScreen('home')">ホームへ</button>`;
+  showScreen("result");
+}
+function showShelfSwap(book){
+  shelfGrid.innerHTML=`<div class="notice" style="grid-column:1/-1">📚 本棚がいっぱいです。新作『${esc(book.title)}』を残すには、入れ替える1冊を選んでください。</div>`+state.books.map(b=>`<div class="book"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><button class="danger" style="padding:7px" onclick="swapBook('${b.id}')">この本と交換</button></div></div>`).join("");
+  showScreen("shelf");
+}
+function swapBook(id){
+  const b=window.__pendingBook;if(!b)return;
+  const idx=state.books.findIndex(x=>x.id===id);if(idx<0)return;
+  state.books[idx]=b;window.__pendingBook=null;saveState();showBookComplete(b);
+}
+function bookDetail(id){
+  const b=state.books.find(x=>x.id===id);if(!b)return;
+  resultContent.innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.day}日目</p>${b.rating?`<div class="card"><h2>⭐${b.rating} / 10</h2><p>👦「${esc(b.comment)}」</p></div>`:'<div class="notice">🆕 まだチュゴンくんに読んでいません。</div>'}<button class="bigbtn" onclick="startRead('${b.id}')">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" style="margin-top:8px" onclick="showScreen('shelf')">← 本棚へ</button>`;
+  showScreen("result");
+}
+function showRead(){
+  showScreen("read");
+  if(!state.books.length){readContent.innerHTML='<div class="notice">本棚に絵本がありません。</div>';return;}
+  readContent.innerHTML=`<p class="muted">読む絵本を選んでね。</p><div class="grid">${state.books.map(b=>`<div class="book" onclick="startRead('${b.id}')"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}</div></div>`).join("")}</div>`;
+}
+function startRead(id){
+  const b=state.books.find(x=>x.id===id);if(!b)return;
+  if(!canSpend(2)){toast("今日はもう読み聞かせる時間がありません");return;}
+  if(b.rating){
+    spendTime(2);state.daily.reads++;saveState();
+    showRatingResult(b,true);return;
+  }
+  const {rating,comment}=evaluateBook(b);b.rating=rating;b.comment=comment;spendTime(2);state.daily.reads++;
+  const oldBest=state.books.filter(x=>x.id!==b.id&&x.rating).reduce((m,x)=>Math.max(m,x.rating),0);
+  b.newRecord=rating>oldBest;saveState();showRatingResult(b,false);
+}
+function humorValue(b){
+  const funnyWords=["パンツ","トイレ","ゾンビ","UFO","爆弾","トイレット","おばけ","巨大","踊る","終わらない","しゃべる","空飛ぶ","なぞ","あやしい","宇宙人","ロボット","カレー","ラーメン"];
+  return funnyWords.some(w=>b.itemName.includes(w))?2:0;
+}
+function evaluateBook(b){
+  if(!b.character){
+    let rating=Math.max(1,Math.min(5,1+Math.floor(Math.random()*4)+(b.titleKind==="暴走"?1:0)));
+    if(Math.random()<.07) rating=Math.min(7,rating+3);
+    return {rating,comment:pickComment(rating,b)};
+  }
+  let score=4;
+  score+=humorValue(b);
+  score+=b.titleKind==="王道"?0:b.titleKind==="事件"?1:b.titleKind==="クセ強"?2:Math.floor(Math.random()*4)-1;
+  score+=Math.floor(Math.random()*4)-1;
+  score=Math.max(1,Math.min(10,score));
+  if(Math.random()<.08) score=Math.min(10,score+2);
+  return {rating:score,comment:pickComment(score,b)};
+}
+function pickComment(score,b){
+  const pools={
+    low:["これ絵本なの？","よくわかんない。おしまい。","写真まちがえた？","これ作ってるとき眠かったでしょ。","ぼく、本屋さんで見てももどす。"],
+    mid:["うーん、ちょっとだけおもしろかった。","タイトルだけは好き！","もうちょっとへんなのがよかった。","ふつうに好き！","このタイトル、おぼえちゃった。"],
+    high:["これ好き！本屋さんにあったら見つける！","へんなのにちゃんとかわいい！","タイトル言うだけでおもしろい！","このキャラ、つぎの本にも出して！","ぼくならこれ、まくらのよこに置く。"],
+    top:["これ売れるよ！ぼく5さいだからわかる！","もう1回！……やっぱ3回！","なんでこんなの思いついたの！？","これ、ぼくの本にする。","天才じゃん。","これ100かい読んで！！！","なんでかわかんないけど、これがいちばん好き！！！"]
+  };
+  const arr=score<=3?pools.low:score<=6?pools.mid:score<=8?pools.high:pools.top;
+  let c=arr[Math.floor(Math.random()*arr.length)];
+  if(Math.random()<.18) c+=" でも "+b.itemEmoji+" はちょっとずるい。";
+  return c;
+}
+function showRatingResult(b,reread){
+  resultContent.innerHTML=`${b.newRecord&&!reread?'<div class="notice success">🎉 NEW RECORD！ 最高評価を更新しました！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1 style="font-size:48px;margin:8px">⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><div class="card"><p style="font-size:18px;font-weight:900">👦「${esc(b.comment)}」</p></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><button class="bigbtn primary" onclick="showScreen('home')">ホームへ</button>`;
+  showScreen("result");
+}
+function restDay(){
+  if(!confirm(`今日はもう休みますか？\\n${state.day}日目 ${state.hour}:00 → ${state.day+1}日目 9:00`))return;
+  const d=state.daily;
+  const summary=`🌙 ${state.day}日目終了\\n写真保存 ${d.photos}枚 / ガチャ ${d.gacha}回 / バイト ${d.timey}回 / 新作 ${d.books}冊 / 読み聞かせ ${d.reads}回`;
+  state.day++;state.hour=9;state.timeyUsed=false;state.daily={photos:0,gacha:0,timey:0,books:0,reads:0};saveState();alert(summary+"\\n\\n☀️ "+state.day+"日目 9:00");showScreen("home");
+}
+function esc(s){ return String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m])); }
+renderAll();
+</script>
+</body>
+</html>
