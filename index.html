@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α0.5</title>
+<title>読み聞かせるね チュゴンくん α0.6</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -177,7 +177,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α0.5：本棚12冊・アイテム一覧・タイミー／タイトル／コメント拡張版。写真の主人公判定は、いまは撮影後に呼び名を入力する仮仕様です。</div>
+    <div class="footer-note">α0.6：本棚12冊・アイテム一覧・タイミー／タイトル／コメント拡張版。写真の主人公判定は、いまは撮影後に呼び名を入力する仮仕様です。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -187,7 +187,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
         <div class="help-item"><h3>🎯 目的</h3><p>1週間（7日間）で、チュゴンくんから高評価をもらえる絵本を作ろう。評価は⭐1〜10！</p></div>
         <div class="help-item"><h3>🕘 時間</h3><p>1日は9:00〜21:00。写真を撮るだけなら0時間、写真保存+1時間、ガチャ+1時間、絵本作成+2時間、読み聞かせ+2時間。タイミーは2〜8時間です。</p></div>
         <div class="help-item"><h3>📸 写真</h3><p>好きなだけ撮影可能。アルバムは最大9枚。いっぱいなら1枚と交換します。</p></div>
-        <div class="help-item"><h3>🎰 ガチャ</h3><p>1回500円。C / R / SR / SSR の200アイテム。絵本作成で使ったアイテムは1個消費します。</p><button class="ghost" data-nav="itemdex" style="width:100%;margin-top:8px">🎁 アイテム一覧</button></div>
+        <div class="help-item"><h3>🎰 ガチャ</h3><p>1回500円。C / R / SR / SSR の300アイテム。絵本作成で使ったアイテムは1個消費します。</p><button class="ghost" data-nav="itemdex" style="width:100%;margin-top:8px">🎁 アイテム一覧</button></div>
         <div class="help-item"><h3>🏃 タイミー</h3><p>1日1回だけ働けます。毎日ランダムに出る3つの仕事から選択。仕事によって <b>2〜8時間</b>、報酬も大きく変わります。</p></div>
         <div class="help-item"><h3>🖋️ 絵本</h3><p>写真1枚＋アイテム1個からタイトルと表紙を作ります。本棚は最大12冊。</p></div>
         <div class="help-item"><h3>👦 評価</h3><p>チュゴンくんはユーモラスな作品やクセのあるタイトルが好き。でも変すぎると低評価になることも。</p></div>
@@ -243,7 +243,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
   <main id="screen-itemdex" class="screen">
     <div class="card">
       <div class="section-title"><h2>🎁 アイテム一覧</h2><button class="ghost" data-nav="help">← 遊びかた</button></div>
-      <p class="muted">ガチャから出る可能性がある全200種類。レア度で絞り込めます。</p>
+      <p class="muted">ガチャから出る可能性がある全300種類。レア度で絞り込めます。</p>
       <div id="itemDexFilters" class="chipbar"></div>
       <div id="itemDexGrid" class="grid" style="margin-top:10px"></div>
     </div>
@@ -290,7 +290,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
 
 <script>
 "use strict";
-const ITEMS=[{"id":1,"emoji":"🍎","name":"まっかなリンゴ","rarity":"C"},{"id":2,"emoji":"🍌","name":"バナナ","rarity":"C"},{"id":3,"emoji":"🍓","name":"いちご","rarity":"C"},{"id":4,"emoji":"🍉","name":"大きなスイカ","rarity":"C"},{"id":5,"emoji":"🍇","name":"ぶどう","rarity":"C"},{"id":6,"emoji":"🍙","name":"おにぎり","rarity":"C"},{"id":7,"emoji":"🍞","name":"焼きたてパン","rarity":"C"},{"id":8,"emoji":"🍰","name":"ショートケーキ","rarity":"C"},{"id":9,"emoji":"🍮","name":"プリン","rarity":"C"},{"id":10,"emoji":"🍦","name":"ソフトクリーム","rarity":"C"},{"id":11,"emoji":"🧸","name":"くまのぬいぐるみ","rarity":"C"},{"id":12,"emoji":"🪀","name":"ヨーヨー","rarity":"C"},{"id":13,"emoji":"🪁","name":"空飛ぶたこ","rarity":"C"},{"id":14,"emoji":"🎈","name":"赤い風船","rarity":"C"},{"id":15,"emoji":"🧩","name":"ふしぎなパズル","rarity":"R"},{"id":16,"emoji":"🎨","name":"お絵かきセット","rarity":"C"},{"id":17,"emoji":"🖍️","name":"魔法のクレヨン","rarity":"R"},{"id":18,"emoji":"🎲","name":"サイコロ","rarity":"C"},{"id":19,"emoji":"🪄","name":"魔法のステッキ","rarity":"SR"},{"id":20,"emoji":"🎁","name":"ひみつのプレゼント","rarity":"R"},{"id":21,"emoji":"👑","name":"王さまの冠","rarity":"SR"},{"id":22,"emoji":"💎","name":"伝説の宝石","rarity":"SR"},{"id":23,"emoji":"🗝️","name":"金色のカギ","rarity":"SR"},{"id":24,"emoji":"🏰","name":"小さなお城","rarity":"SR"},{"id":25,"emoji":"🧙","name":"魔法使いの帽子","rarity":"SR"},{"id":26,"emoji":"🧹","name":"空飛ぶほうき","rarity":"SR"},{"id":27,"emoji":"🪽","name":"天使の羽","rarity":"SR"},{"id":28,"emoji":"🔮","name":"未来が見える水晶","rarity":"SSR"},{"id":29,"emoji":"🧞","name":"魔法のランプ","rarity":"SSR"},{"id":30,"emoji":"⚔️","name":"勇者の剣","rarity":"SR"},{"id":31,"emoji":"🚗","name":"赤い自動車","rarity":"C"},{"id":32,"emoji":"🚕","name":"黄色いタクシー","rarity":"C"},{"id":33,"emoji":"🚌","name":"大きなバス","rarity":"C"},{"id":34,"emoji":"🚲","name":"自転車","rarity":"C"},{"id":35,"emoji":"🛵","name":"スクーター","rarity":"C"},{"id":36,"emoji":"🚂","name":"蒸気機関車","rarity":"C"},{"id":37,"emoji":"✈️","name":"飛行機","rarity":"C"},{"id":38,"emoji":"🚁","name":"ヘリコプター","rarity":"C"},{"id":39,"emoji":"🚀","name":"ロケット","rarity":"SR"},{"id":40,"emoji":"🛸","name":"UFO","rarity":"SSR"},{"id":41,"emoji":"🌈","name":"虹","rarity":"SR"},{"id":42,"emoji":"☁️","name":"ふわふわ雲","rarity":"C"},{"id":43,"emoji":"⭐","name":"お星さま","rarity":"R"},{"id":44,"emoji":"🌙","name":"お月さま","rarity":"SR"},{"id":45,"emoji":"☀️","name":"おひさま","rarity":"C"},{"id":46,"emoji":"🌋","name":"火山","rarity":"R"},{"id":47,"emoji":"🏝️","name":"無人島","rarity":"R"},{"id":48,"emoji":"🌊","name":"大きな波","rarity":"R"},{"id":49,"emoji":"🌲","name":"不思議な木","rarity":"R"},{"id":50,"emoji":"🍄","name":"巨大キノコ","rarity":"SR"},{"id":51,"emoji":"👻","name":"おばけ","rarity":"R"},{"id":52,"emoji":"💀","name":"ガイコツ","rarity":"R"},{"id":53,"emoji":"🧟","name":"ゾンビ","rarity":"R"},{"id":54,"emoji":"👽","name":"宇宙人","rarity":"SR"},{"id":55,"emoji":"🤖","name":"ロボット","rarity":"SR"},{"id":56,"emoji":"👹","name":"鬼のお面","rarity":"R"},{"id":57,"emoji":"🎃","name":"ハロウィンかぼちゃ","rarity":"R"},{"id":58,"emoji":"🕷️","name":"巨大クモ","rarity":"R"},{"id":59,"emoji":"🦇","name":"コウモリ","rarity":"R"},{"id":60,"emoji":"🪦","name":"あやしいお墓","rarity":"R"},{"id":61,"emoji":"🎩","name":"シルクハット","rarity":"C"},{"id":62,"emoji":"🧢","name":"青い帽子","rarity":"C"},{"id":63,"emoji":"👓","name":"大きなメガネ","rarity":"C"},{"id":64,"emoji":"🕶️","name":"サングラス","rarity":"C"},{"id":65,"emoji":"👔","name":"ネクタイ","rarity":"C"},{"id":66,"emoji":"👗","name":"お姫さまドレス","rarity":"C"},{"id":67,"emoji":"👟","name":"ものすごく速い靴","rarity":"SR"},{"id":68,"emoji":"🥾","name":"冒険ブーツ","rarity":"C"},{"id":69,"emoji":"🧣","name":"長すぎるマフラー","rarity":"C"},{"id":70,"emoji":"🩲","name":"伝説のパンツ","rarity":"R"},{"id":71,"emoji":"⏰","name":"目覚まし時計","rarity":"C"},{"id":72,"emoji":"☂️","name":"大きな傘","rarity":"C"},{"id":73,"emoji":"🔦","name":"懐中電灯","rarity":"C"},{"id":74,"emoji":"📺","name":"テレビ","rarity":"C"},{"id":75,"emoji":"📱","name":"スマートフォン","rarity":"C"},{"id":76,"emoji":"📷","name":"カメラ","rarity":"C"},{"id":77,"emoji":"🪞","name":"魔法の鏡","rarity":"SR"},{"id":78,"emoji":"🛏️","name":"ふかふかベッド","rarity":"C"},{"id":79,"emoji":"🛁","name":"お風呂","rarity":"C"},{"id":80,"emoji":"🚽","name":"トイレ","rarity":"C"},{"id":81,"emoji":"🎸","name":"ギター","rarity":"C"},{"id":82,"emoji":"🎺","name":"トランペット","rarity":"C"},{"id":83,"emoji":"🥁","name":"太鼓","rarity":"C"},{"id":84,"emoji":"🎤","name":"マイク","rarity":"C"},{"id":85,"emoji":"🎪","name":"サーカステント","rarity":"C"},{"id":86,"emoji":"🎡","name":"観覧車","rarity":"C"},{"id":87,"emoji":"🎢","name":"ジェットコースター","rarity":"R"},{"id":88,"emoji":"🎆","name":"花火","rarity":"R"},{"id":89,"emoji":"🏆","name":"金のトロフィー","rarity":"C"},{"id":90,"emoji":"⚽","name":"サッカーボール","rarity":"C"},{"id":91,"emoji":"💣","name":"爆弾","rarity":"R"},{"id":92,"emoji":"🧲","name":"超強力磁石","rarity":"SR"},{"id":93,"emoji":"⏳","name":"時間を戻す砂時計","rarity":"SSR"},{"id":94,"emoji":"🗺️","name":"宝の地図","rarity":"SR"},{"id":95,"emoji":"📕","name":"しゃべる本","rarity":"SSR"},{"id":96,"emoji":"🧪","name":"あやしい薬","rarity":"SR"},{"id":97,"emoji":"🫧","name":"巨大シャボン玉","rarity":"R"},{"id":98,"emoji":"🪜","name":"空まで届くはしご","rarity":"R"},{"id":99,"emoji":"🚪","name":"どこかにつながる扉","rarity":"SSR"},{"id":100,"emoji":"🥚","name":"なにかが生まれそうな卵","rarity":"SSR"},{"id":101,"emoji":"🐾","name":"なぞの足あと","rarity":"C"},{"id":102,"emoji":"🐚","name":"海から届いた貝がら","rarity":"C"},{"id":103,"emoji":"🪶","name":"空から落ちてきた羽根","rarity":"SR"},{"id":104,"emoji":"🪺","name":"ひみつの鳥の巣","rarity":"C"},{"id":105,"emoji":"🪹","name":"空っぽの巣","rarity":"R"},{"id":106,"emoji":"🐌","name":"のんびりカタツムリ","rarity":"C"},{"id":107,"emoji":"🦋","name":"幸せを運ぶチョウ","rarity":"SR"},{"id":108,"emoji":"🐝","name":"はたらきもののハチ","rarity":"C"},{"id":109,"emoji":"🪲","name":"ピカピカのカブトムシ","rarity":"C"},{"id":110,"emoji":"🐞","name":"幸運のてんとう虫","rarity":"C"},{"id":111,"emoji":"🌸","name":"満開のさくら","rarity":"C"},{"id":112,"emoji":"🌻","name":"大きなひまわり","rarity":"C"},{"id":113,"emoji":"🌹","name":"真っ赤なバラ","rarity":"C"},{"id":114,"emoji":"🌷","name":"春色のチューリップ","rarity":"C"},{"id":115,"emoji":"🪻","name":"いい香りの花","rarity":"C"},{"id":116,"emoji":"🌱","name":"小さな芽","rarity":"C"},{"id":117,"emoji":"🌵","name":"トゲトゲサボテン","rarity":"C"},{"id":118,"emoji":"🎋","name":"願いごとの笹","rarity":"R"},{"id":119,"emoji":"🍀","name":"四つ葉のクローバー","rarity":"SR"},{"id":120,"emoji":"🍁","name":"空飛ぶもみじ","rarity":"C"},{"id":121,"emoji":"🍕","name":"巨大ピザ","rarity":"C"},{"id":122,"emoji":"🍔","name":"特大ハンバーガー","rarity":"C"},{"id":123,"emoji":"🍟","name":"山盛りポテト","rarity":"C"},{"id":124,"emoji":"🌭","name":"なが〜いホットドッグ","rarity":"C"},{"id":125,"emoji":"🥪","name":"具だくさんサンドイッチ","rarity":"C"},{"id":126,"emoji":"🥞","name":"ふわふわパンケーキ","rarity":"C"},{"id":127,"emoji":"🧇","name":"サクサクワッフル","rarity":"C"},{"id":128,"emoji":"🍩","name":"虹色ドーナツ","rarity":"R"},{"id":129,"emoji":"🍪","name":"魔法のクッキー","rarity":"SR"},{"id":130,"emoji":"🧁","name":"小さなカップケーキ","rarity":"C"},{"id":131,"emoji":"🍚","name":"ほかほかごはん","rarity":"C"},{"id":132,"emoji":"🍛","name":"不思議なカレー","rarity":"R"},{"id":133,"emoji":"🍜","name":"なが〜いラーメン","rarity":"C"},{"id":134,"emoji":"🍝","name":"空飛ぶスパゲッティ","rarity":"R"},{"id":135,"emoji":"🍣","name":"回転するおすし","rarity":"R"},{"id":136,"emoji":"🍤","name":"大きなエビフライ","rarity":"C"},{"id":137,"emoji":"🍳","name":"踊る目玉焼き","rarity":"R"},{"id":138,"emoji":"🧀","name":"穴だらけのチーズ","rarity":"C"},{"id":139,"emoji":"🥐","name":"三日月クロワッサン","rarity":"C"},{"id":140,"emoji":"🥨","name":"ぐるぐるプレッツェル","rarity":"C"},{"id":141,"emoji":"🍬","name":"カラフルキャンディ","rarity":"C"},{"id":142,"emoji":"🍭","name":"巨大ペロペロキャンディ","rarity":"C"},{"id":143,"emoji":"🍫","name":"とけないチョコレート","rarity":"SR"},{"id":144,"emoji":"🍯","name":"黄金のはちみつ","rarity":"C"},{"id":145,"emoji":"🧋","name":"タピオカドリンク","rarity":"C"},{"id":146,"emoji":"🥤","name":"しゅわしゅわジュース","rarity":"C"},{"id":147,"emoji":"🧃","name":"ふしぎなフルーツジュース","rarity":"C"},{"id":148,"emoji":"☕","name":"空飛ぶコーヒーカップ","rarity":"C"},{"id":149,"emoji":"🫖","name":"しゃべるティーポット","rarity":"R"},{"id":150,"emoji":"🥛","name":"まっ白なミルク","rarity":"C"},{"id":151,"emoji":"🏡","name":"森の小さなおうち","rarity":"R"},{"id":152,"emoji":"🏕️","name":"星の見えるテント","rarity":"C"},{"id":153,"emoji":"⛺","name":"冒険キャンプ","rarity":"C"},{"id":154,"emoji":"🛖","name":"山奥の秘密基地","rarity":"R"},{"id":155,"emoji":"🏫","name":"夜だけ開く学校","rarity":"R"},{"id":156,"emoji":"🏥","name":"動物たちの病院","rarity":"C"},{"id":157,"emoji":"🏨","name":"不思議なホテル","rarity":"R"},{"id":158,"emoji":"🏪","name":"なんでも売ってるお店","rarity":"R"},{"id":159,"emoji":"🎠","name":"魔法のメリーゴーラウンド","rarity":"R"},{"id":160,"emoji":"⛲","name":"願いが叶う噴水","rarity":"SR"},{"id":161,"emoji":"🗻","name":"雲の上まで続く山","rarity":"R"},{"id":162,"emoji":"🏔️","name":"雪だらけの山","rarity":"C"},{"id":163,"emoji":"🏜️","name":"金色の砂漠","rarity":"C"},{"id":164,"emoji":"🏖️","name":"宝物が眠るビーチ","rarity":"C"},{"id":165,"emoji":"🏞️","name":"虹がかかる谷","rarity":"R"},{"id":166,"emoji":"🌌","name":"星空の世界","rarity":"SSR"},{"id":167,"emoji":"🌃","name":"光る夜の街","rarity":"R"},{"id":168,"emoji":"🌁","name":"霧に隠れた町","rarity":"R"},{"id":169,"emoji":"🌉","name":"夜空に浮かぶ橋","rarity":"R"},{"id":170,"emoji":"🗼","name":"空まで届くタワー","rarity":"R"},{"id":171,"emoji":"🧰","name":"なんでも直せる工具箱","rarity":"SR"},{"id":172,"emoji":"🔧","name":"魔法のスパナ","rarity":"R"},{"id":173,"emoji":"🔨","name":"大工さんのハンマー","rarity":"C"},{"id":174,"emoji":"🪛","name":"小さなドライバー","rarity":"C"},{"id":175,"emoji":"🧹","name":"勝手に掃除するほうき","rarity":"R"},{"id":176,"emoji":"🪣","name":"水がなくならないバケツ","rarity":"R"},{"id":177,"emoji":"🧽","name":"なんでもピカピカスポンジ","rarity":"R"},{"id":178,"emoji":"🪥","name":"巨大歯ブラシ","rarity":"C"},{"id":179,"emoji":"🧴","name":"香りが変わるボトル","rarity":"R"},{"id":180,"emoji":"🧻","name":"終わらないトイレットペーパー","rarity":"R"},{"id":181,"emoji":"✏️","name":"なんでも描けるえんぴつ","rarity":"R"},{"id":182,"emoji":"🖊️","name":"勝手に物語を書くペン","rarity":"SR"},{"id":183,"emoji":"📏","name":"どこまでも伸びる定規","rarity":"R"},{"id":184,"emoji":"✂️","name":"紙だけ切れる不思議なハサミ","rarity":"C"},{"id":185,"emoji":"📐","name":"三角の秘密道具","rarity":"R"},{"id":186,"emoji":"📎","name":"巨大クリップ","rarity":"C"},{"id":187,"emoji":"📌","name":"空を飛ぶ画びょう","rarity":"R"},{"id":188,"emoji":"🗒️","name":"未来が書いてあるメモ帳","rarity":"SR"},{"id":189,"emoji":"📓","name":"思い出が増えるノート","rarity":"R"},{"id":190,"emoji":"📚","name":"夜になると動き出す本","rarity":"SR"},{"id":191,"emoji":"🎂","name":"ろうそく100本のケーキ","rarity":"R"},{"id":192,"emoji":"🕯️","name":"消えないろうそく","rarity":"R"},{"id":193,"emoji":"🪩","name":"踊りだすミラーボール","rarity":"R"},{"id":194,"emoji":"🎐","name":"願いを運ぶ風鈴","rarity":"R"},{"id":195,"emoji":"🧿","name":"見守ってくれるお守り","rarity":"R"},{"id":196,"emoji":"🪬","name":"不思議な魔除け","rarity":"R"},{"id":197,"emoji":"🏮","name":"夜道を照らすちょうちん","rarity":"C"},{"id":198,"emoji":"🎀","name":"ほどけないリボン","rarity":"R"},{"id":199,"emoji":"🪄","name":"願いを1つかなえる杖","rarity":"SSR"},{"id":200,"emoji":"🧳","name":"なんでも入る旅行かばん","rarity":"SSR"}];
+const ITEMS=[{"id":1,"emoji":"🍎","name":"まっかなリンゴ","rarity":"C"},{"id":2,"emoji":"🍌","name":"バナナ","rarity":"C"},{"id":3,"emoji":"🍓","name":"いちご","rarity":"C"},{"id":4,"emoji":"🍉","name":"大きなスイカ","rarity":"C"},{"id":5,"emoji":"🍇","name":"ぶどう","rarity":"C"},{"id":6,"emoji":"🍙","name":"おにぎり","rarity":"C"},{"id":7,"emoji":"🍞","name":"焼きたてパン","rarity":"C"},{"id":8,"emoji":"🍰","name":"ショートケーキ","rarity":"C"},{"id":9,"emoji":"🍮","name":"プリン","rarity":"C"},{"id":10,"emoji":"🍦","name":"ソフトクリーム","rarity":"C"},{"id":11,"emoji":"🧸","name":"くまのぬいぐるみ","rarity":"C"},{"id":12,"emoji":"🪀","name":"ヨーヨー","rarity":"C"},{"id":13,"emoji":"🪁","name":"空飛ぶたこ","rarity":"C"},{"id":14,"emoji":"🎈","name":"赤い風船","rarity":"C"},{"id":15,"emoji":"🧩","name":"ふしぎなパズル","rarity":"R"},{"id":16,"emoji":"🎨","name":"お絵かきセット","rarity":"C"},{"id":17,"emoji":"🖍️","name":"魔法のクレヨン","rarity":"R"},{"id":18,"emoji":"🎲","name":"サイコロ","rarity":"C"},{"id":19,"emoji":"🪄","name":"魔法のステッキ","rarity":"SR"},{"id":20,"emoji":"🎁","name":"ひみつのプレゼント","rarity":"R"},{"id":21,"emoji":"👑","name":"王さまの冠","rarity":"SR"},{"id":22,"emoji":"💎","name":"伝説の宝石","rarity":"SR"},{"id":23,"emoji":"🗝️","name":"金色のカギ","rarity":"SR"},{"id":24,"emoji":"🏰","name":"小さなお城","rarity":"SR"},{"id":25,"emoji":"🧙","name":"魔法使いの帽子","rarity":"SR"},{"id":26,"emoji":"🧹","name":"空飛ぶほうき","rarity":"SR"},{"id":27,"emoji":"🪽","name":"天使の羽","rarity":"SR"},{"id":28,"emoji":"🔮","name":"未来が見える水晶","rarity":"SSR"},{"id":29,"emoji":"🧞","name":"魔法のランプ","rarity":"SSR"},{"id":30,"emoji":"⚔️","name":"勇者の剣","rarity":"SR"},{"id":31,"emoji":"🚗","name":"赤い自動車","rarity":"C"},{"id":32,"emoji":"🚕","name":"黄色いタクシー","rarity":"C"},{"id":33,"emoji":"🚌","name":"大きなバス","rarity":"C"},{"id":34,"emoji":"🚲","name":"自転車","rarity":"C"},{"id":35,"emoji":"🛵","name":"スクーター","rarity":"C"},{"id":36,"emoji":"🚂","name":"蒸気機関車","rarity":"C"},{"id":37,"emoji":"✈️","name":"飛行機","rarity":"C"},{"id":38,"emoji":"🚁","name":"ヘリコプター","rarity":"C"},{"id":39,"emoji":"🚀","name":"ロケット","rarity":"SR"},{"id":40,"emoji":"🛸","name":"UFO","rarity":"SSR"},{"id":41,"emoji":"🌈","name":"虹","rarity":"SR"},{"id":42,"emoji":"☁️","name":"ふわふわ雲","rarity":"C"},{"id":43,"emoji":"⭐","name":"お星さま","rarity":"R"},{"id":44,"emoji":"🌙","name":"お月さま","rarity":"SR"},{"id":45,"emoji":"☀️","name":"おひさま","rarity":"C"},{"id":46,"emoji":"🌋","name":"火山","rarity":"R"},{"id":47,"emoji":"🏝️","name":"無人島","rarity":"R"},{"id":48,"emoji":"🌊","name":"大きな波","rarity":"R"},{"id":49,"emoji":"🌲","name":"不思議な木","rarity":"R"},{"id":50,"emoji":"🍄","name":"巨大キノコ","rarity":"SR"},{"id":51,"emoji":"👻","name":"おばけ","rarity":"R"},{"id":52,"emoji":"💀","name":"ガイコツ","rarity":"R"},{"id":53,"emoji":"🧟","name":"ゾンビ","rarity":"R"},{"id":54,"emoji":"👽","name":"宇宙人","rarity":"SR"},{"id":55,"emoji":"🤖","name":"ロボット","rarity":"SR"},{"id":56,"emoji":"👹","name":"鬼のお面","rarity":"R"},{"id":57,"emoji":"🎃","name":"ハロウィンかぼちゃ","rarity":"R"},{"id":58,"emoji":"🕷️","name":"巨大クモ","rarity":"R"},{"id":59,"emoji":"🦇","name":"コウモリ","rarity":"R"},{"id":60,"emoji":"🪦","name":"あやしいお墓","rarity":"R"},{"id":61,"emoji":"🎩","name":"シルクハット","rarity":"C"},{"id":62,"emoji":"🧢","name":"青い帽子","rarity":"C"},{"id":63,"emoji":"👓","name":"大きなメガネ","rarity":"C"},{"id":64,"emoji":"🕶️","name":"サングラス","rarity":"C"},{"id":65,"emoji":"👔","name":"ネクタイ","rarity":"C"},{"id":66,"emoji":"👗","name":"お姫さまドレス","rarity":"C"},{"id":67,"emoji":"👟","name":"ものすごく速い靴","rarity":"SR"},{"id":68,"emoji":"🥾","name":"冒険ブーツ","rarity":"C"},{"id":69,"emoji":"🧣","name":"長すぎるマフラー","rarity":"C"},{"id":70,"emoji":"🩲","name":"伝説のパンツ","rarity":"R"},{"id":71,"emoji":"⏰","name":"目覚まし時計","rarity":"C"},{"id":72,"emoji":"☂️","name":"大きな傘","rarity":"C"},{"id":73,"emoji":"🔦","name":"懐中電灯","rarity":"C"},{"id":74,"emoji":"📺","name":"テレビ","rarity":"C"},{"id":75,"emoji":"📱","name":"スマートフォン","rarity":"C"},{"id":76,"emoji":"📷","name":"カメラ","rarity":"C"},{"id":77,"emoji":"🪞","name":"魔法の鏡","rarity":"SR"},{"id":78,"emoji":"🛏️","name":"ふかふかベッド","rarity":"C"},{"id":79,"emoji":"🛁","name":"お風呂","rarity":"C"},{"id":80,"emoji":"🚽","name":"トイレ","rarity":"C"},{"id":81,"emoji":"🎸","name":"ギター","rarity":"C"},{"id":82,"emoji":"🎺","name":"トランペット","rarity":"C"},{"id":83,"emoji":"🥁","name":"太鼓","rarity":"C"},{"id":84,"emoji":"🎤","name":"マイク","rarity":"C"},{"id":85,"emoji":"🎪","name":"サーカステント","rarity":"C"},{"id":86,"emoji":"🎡","name":"観覧車","rarity":"C"},{"id":87,"emoji":"🎢","name":"ジェットコースター","rarity":"R"},{"id":88,"emoji":"🎆","name":"花火","rarity":"R"},{"id":89,"emoji":"🏆","name":"金のトロフィー","rarity":"C"},{"id":90,"emoji":"⚽","name":"サッカーボール","rarity":"C"},{"id":91,"emoji":"💣","name":"爆弾","rarity":"R"},{"id":92,"emoji":"🧲","name":"超強力磁石","rarity":"SR"},{"id":93,"emoji":"⏳","name":"時間を戻す砂時計","rarity":"SSR"},{"id":94,"emoji":"🗺️","name":"宝の地図","rarity":"SR"},{"id":95,"emoji":"📕","name":"しゃべる本","rarity":"SSR"},{"id":96,"emoji":"🧪","name":"あやしい薬","rarity":"SR"},{"id":97,"emoji":"🫧","name":"巨大シャボン玉","rarity":"R"},{"id":98,"emoji":"🪜","name":"空まで届くはしご","rarity":"R"},{"id":99,"emoji":"🚪","name":"どこかにつながる扉","rarity":"SSR"},{"id":100,"emoji":"🥚","name":"なにかが生まれそうな卵","rarity":"SSR"},{"id":101,"emoji":"🐾","name":"なぞの足あと","rarity":"C"},{"id":102,"emoji":"🐚","name":"海から届いた貝がら","rarity":"C"},{"id":103,"emoji":"🪶","name":"空から落ちてきた羽根","rarity":"SR"},{"id":104,"emoji":"🪺","name":"ひみつの鳥の巣","rarity":"C"},{"id":105,"emoji":"🪹","name":"空っぽの巣","rarity":"R"},{"id":106,"emoji":"🐌","name":"のんびりカタツムリ","rarity":"C"},{"id":107,"emoji":"🦋","name":"幸せを運ぶチョウ","rarity":"SR"},{"id":108,"emoji":"🐝","name":"はたらきもののハチ","rarity":"C"},{"id":109,"emoji":"🪲","name":"ピカピカのカブトムシ","rarity":"C"},{"id":110,"emoji":"🐞","name":"幸運のてんとう虫","rarity":"C"},{"id":111,"emoji":"🌸","name":"満開のさくら","rarity":"C"},{"id":112,"emoji":"🌻","name":"大きなひまわり","rarity":"C"},{"id":113,"emoji":"🌹","name":"真っ赤なバラ","rarity":"C"},{"id":114,"emoji":"🌷","name":"春色のチューリップ","rarity":"C"},{"id":115,"emoji":"🪻","name":"いい香りの花","rarity":"C"},{"id":116,"emoji":"🌱","name":"小さな芽","rarity":"C"},{"id":117,"emoji":"🌵","name":"トゲトゲサボテン","rarity":"C"},{"id":118,"emoji":"🎋","name":"願いごとの笹","rarity":"R"},{"id":119,"emoji":"🍀","name":"四つ葉のクローバー","rarity":"SR"},{"id":120,"emoji":"🍁","name":"空飛ぶもみじ","rarity":"C"},{"id":121,"emoji":"🍕","name":"巨大ピザ","rarity":"C"},{"id":122,"emoji":"🍔","name":"特大ハンバーガー","rarity":"C"},{"id":123,"emoji":"🍟","name":"山盛りポテト","rarity":"C"},{"id":124,"emoji":"🌭","name":"なが〜いホットドッグ","rarity":"C"},{"id":125,"emoji":"🥪","name":"具だくさんサンドイッチ","rarity":"C"},{"id":126,"emoji":"🥞","name":"ふわふわパンケーキ","rarity":"C"},{"id":127,"emoji":"🧇","name":"サクサクワッフル","rarity":"C"},{"id":128,"emoji":"🍩","name":"虹色ドーナツ","rarity":"R"},{"id":129,"emoji":"🍪","name":"魔法のクッキー","rarity":"SR"},{"id":130,"emoji":"🧁","name":"小さなカップケーキ","rarity":"C"},{"id":131,"emoji":"🍚","name":"ほかほかごはん","rarity":"C"},{"id":132,"emoji":"🍛","name":"不思議なカレー","rarity":"R"},{"id":133,"emoji":"🍜","name":"なが〜いラーメン","rarity":"C"},{"id":134,"emoji":"🍝","name":"空飛ぶスパゲッティ","rarity":"R"},{"id":135,"emoji":"🍣","name":"回転するおすし","rarity":"R"},{"id":136,"emoji":"🍤","name":"大きなエビフライ","rarity":"C"},{"id":137,"emoji":"🍳","name":"踊る目玉焼き","rarity":"R"},{"id":138,"emoji":"🧀","name":"穴だらけのチーズ","rarity":"C"},{"id":139,"emoji":"🥐","name":"三日月クロワッサン","rarity":"C"},{"id":140,"emoji":"🥨","name":"ぐるぐるプレッツェル","rarity":"C"},{"id":141,"emoji":"🍬","name":"カラフルキャンディ","rarity":"C"},{"id":142,"emoji":"🍭","name":"巨大ペロペロキャンディ","rarity":"C"},{"id":143,"emoji":"🍫","name":"とけないチョコレート","rarity":"SR"},{"id":144,"emoji":"🍯","name":"黄金のはちみつ","rarity":"C"},{"id":145,"emoji":"🧋","name":"タピオカドリンク","rarity":"C"},{"id":146,"emoji":"🥤","name":"しゅわしゅわジュース","rarity":"C"},{"id":147,"emoji":"🧃","name":"ふしぎなフルーツジュース","rarity":"C"},{"id":148,"emoji":"☕","name":"空飛ぶコーヒーカップ","rarity":"C"},{"id":149,"emoji":"🫖","name":"しゃべるティーポット","rarity":"R"},{"id":150,"emoji":"🥛","name":"まっ白なミルク","rarity":"C"},{"id":151,"emoji":"🏡","name":"森の小さなおうち","rarity":"R"},{"id":152,"emoji":"🏕️","name":"星の見えるテント","rarity":"C"},{"id":153,"emoji":"⛺","name":"冒険キャンプ","rarity":"C"},{"id":154,"emoji":"🛖","name":"山奥の秘密基地","rarity":"R"},{"id":155,"emoji":"🏫","name":"夜だけ開く学校","rarity":"R"},{"id":156,"emoji":"🏥","name":"動物たちの病院","rarity":"C"},{"id":157,"emoji":"🏨","name":"不思議なホテル","rarity":"R"},{"id":158,"emoji":"🏪","name":"なんでも売ってるお店","rarity":"R"},{"id":159,"emoji":"🎠","name":"魔法のメリーゴーラウンド","rarity":"R"},{"id":160,"emoji":"⛲","name":"願いが叶う噴水","rarity":"SR"},{"id":161,"emoji":"🗻","name":"雲の上まで続く山","rarity":"R"},{"id":162,"emoji":"🏔️","name":"雪だらけの山","rarity":"C"},{"id":163,"emoji":"🏜️","name":"金色の砂漠","rarity":"C"},{"id":164,"emoji":"🏖️","name":"宝物が眠るビーチ","rarity":"C"},{"id":165,"emoji":"🏞️","name":"虹がかかる谷","rarity":"R"},{"id":166,"emoji":"🌌","name":"星空の世界","rarity":"SSR"},{"id":167,"emoji":"🌃","name":"光る夜の街","rarity":"R"},{"id":168,"emoji":"🌁","name":"霧に隠れた町","rarity":"R"},{"id":169,"emoji":"🌉","name":"夜空に浮かぶ橋","rarity":"R"},{"id":170,"emoji":"🗼","name":"空まで届くタワー","rarity":"R"},{"id":171,"emoji":"🧰","name":"なんでも直せる工具箱","rarity":"SR"},{"id":172,"emoji":"🔧","name":"魔法のスパナ","rarity":"R"},{"id":173,"emoji":"🔨","name":"大工さんのハンマー","rarity":"C"},{"id":174,"emoji":"🪛","name":"小さなドライバー","rarity":"C"},{"id":175,"emoji":"🧹","name":"勝手に掃除するほうき","rarity":"R"},{"id":176,"emoji":"🪣","name":"水がなくならないバケツ","rarity":"R"},{"id":177,"emoji":"🧽","name":"なんでもピカピカスポンジ","rarity":"R"},{"id":178,"emoji":"🪥","name":"巨大歯ブラシ","rarity":"C"},{"id":179,"emoji":"🧴","name":"香りが変わるボトル","rarity":"R"},{"id":180,"emoji":"🧻","name":"終わらないトイレットペーパー","rarity":"R"},{"id":181,"emoji":"✏️","name":"なんでも描けるえんぴつ","rarity":"R"},{"id":182,"emoji":"🖊️","name":"勝手に物語を書くペン","rarity":"SR"},{"id":183,"emoji":"📏","name":"どこまでも伸びる定規","rarity":"R"},{"id":184,"emoji":"✂️","name":"紙だけ切れる不思議なハサミ","rarity":"C"},{"id":185,"emoji":"📐","name":"三角の秘密道具","rarity":"R"},{"id":186,"emoji":"📎","name":"巨大クリップ","rarity":"C"},{"id":187,"emoji":"📌","name":"空を飛ぶ画びょう","rarity":"R"},{"id":188,"emoji":"🗒️","name":"未来が書いてあるメモ帳","rarity":"SR"},{"id":189,"emoji":"📓","name":"思い出が増えるノート","rarity":"R"},{"id":190,"emoji":"📚","name":"夜になると動き出す本","rarity":"SR"},{"id":191,"emoji":"🎂","name":"ろうそく100本のケーキ","rarity":"R"},{"id":192,"emoji":"🕯️","name":"消えないろうそく","rarity":"R"},{"id":193,"emoji":"🪩","name":"踊りだすミラーボール","rarity":"R"},{"id":194,"emoji":"🎐","name":"願いを運ぶ風鈴","rarity":"R"},{"id":195,"emoji":"🧿","name":"見守ってくれるお守り","rarity":"R"},{"id":196,"emoji":"🪬","name":"不思議な魔除け","rarity":"R"},{"id":197,"emoji":"🏮","name":"夜道を照らすちょうちん","rarity":"C"},{"id":198,"emoji":"🎀","name":"ほどけないリボン","rarity":"R"},{"id":199,"emoji":"🪄","name":"願いを1つかなえる杖","rarity":"SSR"},{"id":200,"emoji":"🧳","name":"なんでも入る旅行かばん","rarity":"SSR"},{"id":201,"emoji":"🧦","name":"片方だけのくつした","rarity":"C"},{"id":202,"emoji":"🧤","name":"左手だけの手袋","rarity":"C"},{"id":203,"emoji":"🧢","name":"つばが長すぎる帽子","rarity":"C"},{"id":204,"emoji":"🪭","name":"風が強すぎる扇子","rarity":"R"},{"id":205,"emoji":"🧺","name":"なんでも山盛りになるかご","rarity":"C"},{"id":206,"emoji":"🪑","name":"きしむ丸イス","rarity":"C"},{"id":207,"emoji":"🛋️","name":"沈みすぎるソファ","rarity":"R"},{"id":208,"emoji":"🪟","name":"外より明るい窓","rarity":"R"},{"id":209,"emoji":"🪞","name":"三秒遅れて映る鏡","rarity":"SR"},{"id":210,"emoji":"🧯","name":"ぜったい慌てない消火器","rarity":"C"},{"id":211,"emoji":"🧼","name":"角がなくならない石けん","rarity":"C"},{"id":212,"emoji":"🫧","name":"一個だけ割れない泡","rarity":"R"},{"id":213,"emoji":"🪠","name":"黄金のすっぽん","rarity":"R"},{"id":214,"emoji":"🧷","name":"ものすごく大きな安全ピン","rarity":"C"},{"id":215,"emoji":"🪡","name":"勝手に縫ってくれる針","rarity":"R"},{"id":216,"emoji":"🧵","name":"終わりが見えない赤い糸","rarity":"SR"},{"id":217,"emoji":"🧶","name":"ほどくほど増える毛糸","rarity":"R"},{"id":218,"emoji":"🪢","name":"絶対ほどけない結び目","rarity":"R"},{"id":219,"emoji":"🧲","name":"冷蔵庫だけに強い磁石","rarity":"C"},{"id":220,"emoji":"🪜","name":"一段だけ多い脚立","rarity":"C"},{"id":221,"emoji":"🖇️","name":"書類を逃がさないクリップ","rarity":"C"},{"id":222,"emoji":"📒","name":"一ページ目しかないノート","rarity":"C"},{"id":223,"emoji":"📔","name":"秘密を書きたくなる手帳","rarity":"R"},{"id":224,"emoji":"📝","name":"返事を書いてくるふせん","rarity":"SR"},{"id":225,"emoji":"✉️","name":"宛名のない手紙","rarity":"R"},{"id":226,"emoji":"📦","name":"中身より箱が気になる段ボール","rarity":"C"},{"id":227,"emoji":"🏷️","name":"どこにも貼れない値札","rarity":"C"},{"id":228,"emoji":"🧾","name":"長すぎるレシート","rarity":"R"},{"id":229,"emoji":"🗃️","name":"開けるたび中身が違う箱","rarity":"SR"},{"id":230,"emoji":"🗄️","name":"一番下だけ開かない引き出し","rarity":"R"},{"id":231,"emoji":"🧮","name":"答えがだいたい合うそろばん","rarity":"R"},{"id":232,"emoji":"📐","name":"90度じゃない三角定規","rarity":"C"},{"id":233,"emoji":"📏","name":"昨日より1センチ長い定規","rarity":"R"},{"id":234,"emoji":"🖍️","name":"白いところだけ描けるクレヨン","rarity":"C"},{"id":235,"emoji":"🖌️","name":"空気に色をぬる筆","rarity":"SR"},{"id":236,"emoji":"🧽","name":"汚れを別の場所へ移すスポンジ","rarity":"R"},{"id":237,"emoji":"🪣","name":"底がちょっと遠いバケツ","rarity":"C"},{"id":238,"emoji":"🧹","name":"ゴミを一か所に集めすぎるほうき","rarity":"R"},{"id":239,"emoji":"🧴","name":"押すたび匂いが変わるシャンプー","rarity":"R"},{"id":240,"emoji":"🧻","name":"ミシン目が見つからない紙","rarity":"C"},{"id":241,"emoji":"🍞","name":"耳しかない食パン","rarity":"C"},{"id":242,"emoji":"🥖","name":"長すぎて曲がるフランスパン","rarity":"C"},{"id":243,"emoji":"🥯","name":"穴が大きすぎるベーグル","rarity":"C"},{"id":244,"emoji":"🧀","name":"角だけおいしいチーズ","rarity":"C"},{"id":245,"emoji":"🍿","name":"一粒だけ巨大なポップコーン","rarity":"R"},{"id":246,"emoji":"🍧","name":"最後まで溶けないかき氷","rarity":"SR"},{"id":247,"emoji":"🍨","name":"味が毎秒変わるアイス","rarity":"R"},{"id":248,"emoji":"🥧","name":"中身が気になるパイ","rarity":"C"},{"id":249,"emoji":"🍡","name":"一本だけ四個ついた団子","rarity":"C"},{"id":250,"emoji":"🍘","name":"音だけものすごいせんべい","rarity":"C"},{"id":251,"emoji":"🥠","name":"どうでもいい予言のクッキー","rarity":"R"},{"id":252,"emoji":"🍵","name":"飲む前からほっとするお茶","rarity":"C"},{"id":253,"emoji":"🫗","name":"注いでも減らない水差し","rarity":"R"},{"id":254,"emoji":"🧊","name":"夏を知らない氷","rarity":"SR"},{"id":255,"emoji":"🧂","name":"一粒だけしょっぱすぎる塩","rarity":"C"},{"id":256,"emoji":"🫙","name":"開ける理由がない空きびん","rarity":"C"},{"id":257,"emoji":"🥄","name":"カレー専用の銀のスプーン","rarity":"C"},{"id":258,"emoji":"🍴","name":"一本だけ長いフォーク","rarity":"C"},{"id":259,"emoji":"🥢","name":"絶対そろわないおはし","rarity":"R"},{"id":260,"emoji":"🍽️","name":"料理より主張が強いお皿","rarity":"R"},{"id":261,"emoji":"🧥","name":"ポケットが17個あるコート","rarity":"R"},{"id":262,"emoji":"👖","name":"片方だけ短いズボン","rarity":"C"},{"id":263,"emoji":"👕","name":"前後がわからないTシャツ","rarity":"C"},{"id":264,"emoji":"👞","name":"歩くと小さく拍手する靴","rarity":"SR"},{"id":265,"emoji":"🥽","name":"見なくていいものまで見えるゴーグル","rarity":"SR"},{"id":266,"emoji":"🎒","name":"教科書より重い空のリュック","rarity":"R"},{"id":267,"emoji":"👜","name":"底が見つからないバッグ","rarity":"R"},{"id":268,"emoji":"💼","name":"大事そうに見える空のケース","rarity":"C"},{"id":269,"emoji":"👒","name":"雨の日だけ似合う帽子","rarity":"C"},{"id":270,"emoji":"🧣","name":"巻くたび一周増えるマフラー","rarity":"R"},{"id":271,"emoji":"🛹","name":"曲がる気がないスケートボード","rarity":"C"},{"id":272,"emoji":"🛴","name":"坂道だけ速いキックボード","rarity":"C"},{"id":273,"emoji":"🛞","name":"どこから来たかわからないタイヤ","rarity":"C"},{"id":274,"emoji":"🛶","name":"陸でだけ進みたがるボート","rarity":"R"},{"id":275,"emoji":"⛵","name":"風がなくても進む帆","rarity":"SR"},{"id":276,"emoji":"🚏","name":"来ないバスのバス停","rarity":"R"},{"id":277,"emoji":"🚦","name":"青がちょっと短い信号","rarity":"C"},{"id":278,"emoji":"🗿","name":"昨日より少し近い石像","rarity":"SR"},{"id":279,"emoji":"🪧","name":"何も書いてない大看板","rarity":"C"},{"id":280,"emoji":"🏁","name":"ゴールしたあとに出るスタート旗","rarity":"R"},{"id":281,"emoji":"🛎️","name":"押す前に鳴るベル","rarity":"R"},{"id":282,"emoji":"🔔","name":"夜だけ小声になる鈴","rarity":"C"},{"id":283,"emoji":"📻","name":"未来の天気だけ流すラジオ","rarity":"SR"},{"id":284,"emoji":"📞","name":"誰にもつながらない赤電話","rarity":"R"},{"id":285,"emoji":"💡","name":"ひらめいた時だけ光る電球","rarity":"SR"},{"id":286,"emoji":"🔌","name":"差す場所を選ぶコンセント","rarity":"R"},{"id":287,"emoji":"🔋","name":"気合いで1%増える電池","rarity":"C"},{"id":288,"emoji":"🪫","name":"なぜか元気そうな空電池","rarity":"C"},{"id":289,"emoji":"⌛","name":"急いでいる時だけ遅い砂時計","rarity":"SR"},{"id":290,"emoji":"🕰️","name":"昨日を指している時計","rarity":"SR"},{"id":291,"emoji":"🎟️","name":"行き先が書いてない特別券","rarity":"R"},{"id":292,"emoji":"🎫","name":"一回だけ戻ってくる半券","rarity":"R"},{"id":293,"emoji":"🪙","name":"裏しか出ないコイン","rarity":"R"},{"id":294,"emoji":"💳","name":"買えないものだけ買えるカード","rarity":"SSR"},{"id":295,"emoji":"🗝️","name":"まだ存在しない鍵穴のカギ","rarity":"SSR"},{"id":296,"emoji":"🧿","name":"見てない時だけ光るお守り","rarity":"SR"},{"id":297,"emoji":"📜","name":"最後の一行が毎回変わる巻物","rarity":"SSR"},{"id":298,"emoji":"🧭","name":"近道を嫌う方位磁石","rarity":"SSR"},{"id":299,"emoji":"🕳️","name":"持ち運べる小さな穴","rarity":"SSR"},{"id":300,"emoji":"🪄","name":"一日一回だけ微妙な奇跡を起こす杖","rarity":"SSR"}];
 const JOBS=[
  {emoji:"🧹",name:"開店前のカフェ清掃",hours:2,min:600,max:1100,text:"イスを全部ぴしっと揃えたら、ちょっとだけ達成感があった。"},
  {emoji:"📮",name:"チラシの仕分け",hours:2,min:700,max:1200,text:"同じ紙を見すぎて、帰り道でもチラシに見えた。"},
@@ -319,13 +319,13 @@ const JOBS=[
  {emoji:"📚",name:"図書館の蔵書整理",hours:8,min:2700,max:4700,text:"本を並べ続けていたら、背表紙だけで内容を想像し始めた。"},
  {emoji:"🚩",name:"商店街イベント運営",hours:8,min:3200,max:5200,text:"呼び込みの声だけ、最後までやたら元気だった。"}
 ];
-const DEFAULT_STATE={week:1,day:1,hour:9,money:1500,timeyUsed:false,album:[],inventory:{},seen:{},books:[],weeklyReads:0,daily:{photos:0,gacha:0,timey:0,books:0,reads:0}};
+const DEFAULT_STATE={week:1,day:1,hour:9,money:1500,timeyUsed:false,album:[],inventory:{},seen:{},books:[],weeklyReads:0,recentCommentBases:[],recentComments:[],daily:{photos:0,gacha:0,timey:0,books:0,reads:0}};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const $=id=>document.getElementById(id);
 let state=clone(DEFAULT_STATE);
 let currentScreen="title";
 let capturedData=null,pendingPhoto=null,pendingBook=null,selectedPhotoId=null,selectedItemId=null;
-let jobsToday=[],itemFilter="ALL",itemDexFilter="ALL",dbPromise=null;
+let jobsToday=[],itemFilter="ALL",itemDexFilter="ALL",dbPromise=null,weeklyResultCache=null,weeklyResultBlob=null;
 const money=n=>Number(n).toLocaleString("ja-JP")+"円";
 const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
 const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[m]));
@@ -414,7 +414,7 @@ function renderAlbum(){
 function renderItems(){
  const filters=["ALL","C","R","SR","SSR"];
  $("itemFilters").innerHTML=filters.map(f=>`<button class="chip ${itemFilter===f?"active":""}" data-filter="${f}">${f==="ALL"?"すべて":f}</button>`).join("");
- $("dexProgress").textContent=`入手済み ${Object.keys(state.seen).length} / 200`;
+ $("dexProgress").textContent=`入手済み ${Object.keys(state.seen).length} / ${ITEMS.length}`;
  const list=ITEMS.filter(it=>(state.inventory[it.id]||0)>0&&(itemFilter==="ALL"||it.rarity===itemFilter));
  $("itemsGrid").innerHTML=list.length?list.map(it=>`<div class="item"><span class="badge r-${it.rarity}">${it.rarity}</span><div class="emoji">${it.emoji}</div><div class="name">${esc(it.name)}</div><div class="count">×${state.inventory[it.id]}</div></div>`).join(""):'<div class="empty" style="grid-column:1/-1">まだアイテムがありません。🎰</div>';
 }
@@ -597,7 +597,7 @@ async function createBook(){
  for(const [icon,text] of messages){$("modal").innerHTML=`<div class="loading-icon">${icon}</div><h2>${text}</h2>`;await wait(460);}
  const cover=await makeCover(p.data,made.title,it.emoji);
  closeModal();
- const book={id:uid(),title:made.title,titleKind:made.kind,cover,photoId:p.id,character:p.character,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
+ const book={id:uid(),title:made.title,titleKind:made.kind,cover,coverVersion:2,photoId:p.id,character:p.character,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
  state.inventory[it.id]--;spendTime(2);state.daily.books++;
  if(state.books.length>=12){pendingBook=book;commit();renderBookSwap();return;}
  state.books.push(book);commit();showBookComplete(book);
@@ -610,14 +610,24 @@ function makeCover(photo,title,emoji){
    const scale=Math.max(600/img.width,800/img.height),w=img.width*scale,h=img.height*scale;
    x.drawImage(img,(600-w)/2,(800-h)/2,w,h);
    const g=x.createLinearGradient(0,0,0,800);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(.55,"rgba(0,0,0,.08)");g.addColorStop(1,"rgba(0,0,0,.72)");x.fillStyle=g;x.fillRect(0,0,600,800);
-   x.fillStyle="rgba(255,249,231,.95)";roundRect(x,28,30,544,105,24);x.fill();
-   x.textAlign="left";x.fillStyle="#33505a";x.font="700 22px sans-serif";x.fillText("読み聞かせるね チュゴンくん",52,70);
-   x.textAlign="right";x.font="58px sans-serif";x.fillText(emoji,540,112);
+   // 表紙写真を隠さないよう、シリーズ名の大きな帯は表示しない。
+   x.fillStyle="rgba(255,255,255,.82)";roundRect(x,492,26,78,78,22);x.fill();
+   x.textAlign="center";x.font="48px sans-serif";x.fillText(emoji,531,82);
    x.textAlign="center";x.strokeStyle="rgba(0,0,0,.42)";x.lineWidth=8;x.fillStyle="#fff";x.font="900 46px sans-serif";
    wrapText(x,title,300,620,500,60);
    resolve(c.toDataURL("image/jpeg",.78));
   };img.src=photo;
  });
+}
+async function migrateBookCovers(){
+ let changed=false;
+ for(const b of state.books){
+  if(b.coverVersion===2)continue;
+  const source=state.album.find(p=>p.id===b.photoId);
+  if(!source?.data)continue;
+  try{b.cover=await makeCover(source.data,b.title,b.itemEmoji||"📕");b.coverVersion=2;changed=true;}catch(_){ }
+ }
+ if(changed)persistState();
 }
 function roundRect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 function wrapText(ctx,text,x,y,max,lineH){
@@ -655,35 +665,105 @@ function evaluate(b){
  let s=4+humorBonus(b)+(b.titleKind==="事件"?1:b.titleKind==="クセ強"?2:b.titleKind==="暴走"?Math.floor(Math.random()*4)-1:0)+(Math.floor(Math.random()*4)-1);
  if(Math.random()<.08)s+=2;s=Math.max(1,Math.min(10,s));return {rating:s,comment:commentFor(s,b)};
 }
-function commentFor(s,b){
- const low=[
+const COMMENT_BANKS={
+ low:[
   "これ絵本なの？","写真まちがえた？","よくわかんない。おしまい。","これ作ってるとき眠かったでしょ。","ぼく、本屋さんで見てももどす。",
   "むずかしい顔になっちゃった。","どこで笑えばいいの？","タイトル読んだらもっとわからなくなった。","途中で別のおもちゃのこと考えちゃった。","ぼくにはまだ早かったかも。",
-  "なんでこうなったの？","一回閉じて、もう一回見たけど同じだった。","絵はある。タイトルもある。……うん。","ちょっとだけこわい。ちょっとだけね。","次の本も読んでいい？"
- ];
- const mid=[
+  "なんでこうなったの？","一回閉じて、もう一回見たけど同じだった。","絵はある。タイトルもある。……うん。","ちょっとだけこわい。ちょっとだけね。","次の本も読んでいい？",
+  "これ、説明を聞いたら負けな気がする。","ぼくの知らないルールで進んでる。","表紙に聞いてみたけど何も教えてくれなかった。","題名の途中で迷子になった。","今日はこういう日なんだね。",
+  "わかったふりしようとしたけど無理だった。","これ、夢の中ならわかるのかな。","最初から最後まで『どうして？』だった。","ごめん、ぼく今べつのこと考えてた。","本を閉じたらちょっと安心した。",
+  "タイトルがこっちを試してる。","これ読んだあと何したらいいの？","ぼくの頭の上に『？』が出た。","もう一回読めば……いや、やめとく。","なんか大事なページを一枚飛ばした気がする。",
+  "おもしろいより先に心配になった。","この本、誰に相談して作ったの？","へんなのは好きだけど、これは遠くまで行ったね。","ぼくを置いて物語だけ先に行った。","タイトルだけ別の本から来た？",
+  "表紙は見た。ちゃんと見た。以上です。","ここからどうほめればいい？","読む前より謎が増えたよ。","この本、説明書がいるかも。","ぼくの今日の集中力では勝てなかった。"
+ ],
+ mid:[
   "タイトルだけは好き！","もうちょっとへんなのがよかった。","ふつうに好き！","なんかへんでおもしろい。","このタイトル、おぼえちゃった。",
   "あと一個なにかあったら好きだった！","これ、じわじわくる。","二回目のほうがおもしろいかも。","表紙はすごく気になる！","なんか惜しい！",
-  "友だちに見せたら笑うかも。","ぼく、このへんな感じ嫌いじゃない。","タイトルの音が好き。","ちょっとだけ続きが気になる。","今日読んだ中ではけっこう好き。"
- ];
- const high=[
+  "友だちに見せたら笑うかも。","ぼく、このへんな感じ嫌いじゃない。","タイトルの音が好き。","ちょっとだけ続きが気になる。","今日読んだ中ではけっこう好き。",
+  "あと半歩だけ変だったらもっと好き。","これ、帰り道に思い出すタイプ。","なんか知らないけど口に出したくなる。","表紙をもうちょっとだけ見ていたい。","ちゃんとしてるのに、どこか変。",
+  "ぼくなら最後にもう一回だけ変なことする。","この本、静かに変だね。","タイトルの勢いはかなり好き。","一回笑った。くやしい。","これ、朝より夜に読みたい。",
+  "好きか嫌いか聞かれたら、たぶん好き。","なんか部屋のすみに置いておきたい。","思ってた話とぜんぜん違った。そこは好き。","ちょっと変で、ちょうどいい。","これ学校にあったら借りるか迷う。",
+  "読んだあとタイトルだけ残る。","ぼく、この表紙を冷蔵庫に貼りたい。","変なのに落ち着く。どういうこと？","あと一回へんな事件が起きたら高得点だった。","これ、友だちと読むと強そう。",
+  "おもしろい場所が変なところにある。","なんか気になる。理由はわかんない。","タイトルが先にゴールしてる感じ。","表紙と題名がケンカしててちょっと好き。","ぼくの中の審査員が迷ってる。"
+ ],
+ high:[
   "これ好き！本屋さんにあったら見つける！","へんなのにちゃんとかわいい！","タイトル言うだけでおもしろい！","このキャラ、つぎの本にも出して！","ぼくならこれ、まくらのよこに置く。",
   "もう一回表紙見せて！","これ友だちに読んであげたい！","へんな組み合わせなのに、なんか合ってる！","このタイトル、ずっと頭にのこる。","ちゃんと次が読みたい！",
-  "ぼく、この本の係になりたい。","表紙からもうずるい！","これ、声に出して読むともっといい！","なんか知らないけど笑っちゃう。","今日のお気に入り候補！"
- ];
- const top=[
+  "ぼく、この本の係になりたい。","表紙からもうずるい！","これ、声に出して読むともっといい！","なんか知らないけど笑っちゃう。","今日のお気に入り候補！",
+  "タイトルだけで一回勝ってる。","これ、寝る前に読んだら夢が変になりそう！","このへんなバランス、かなり好き。","友だちに『これ見て』って急に見せたい。","なんで合うのかわかんないけど合ってる！",
+  "この本だけちょっと空気が違う。","ぼく、表紙を見た瞬間にニヤってした。","続編でさらに変になってほしい！","これ、家にあったら何回か開いちゃう。","タイトルが強い。つよつよ。",
+  "一回読んだだけなのにもう知ってる本みたい。","これ作った時、ぜったい楽しかったでしょ。","へんなのにちゃんとお話っぽい！","ぼくの好きな変さに近い。","なんか拍手したくなる。",
+  "これ、朝読んでも夜読んでも変だと思う。そこがいい。","題名を三回言いたい。意味はないけど。","表紙が『読め』って言ってる。","この本、勝手に友だちにすすめたい。","変だけどちゃんと覚えられる！",
+  "ぼくの中であとから点数が上がってきた。","これ、じわじわじゃなくて最初から変。好き。","ちょっと悔しいくらいおもしろい。","この組み合わせを止めなかったのえらい。","今日のぼくにはかなり刺さった！"
+ ],
+ top:[
   "これ売れるよ！ぼく5さいだからわかる！","もう1回！……やっぱ3回！","なんでこんなの思いついたの！？","これ、ぼくの本にする。","天才じゃん。",
   "これ100かい読んで！！！","なんでかわかんないけど、これがいちばん好き！！！","これ明日も読んで！絶対！","ぼくが本屋さんならいちばん前に置く！","この本だけ持って帰っていい？",
   "タイトル見ただけでもう笑った！","これ、夢に出てきてほしい！","最高！もう点数足りない！","これを作った人に拍手したい！","今日からこれがぼくの基準！",
-  "これより好きなの作れるの！？","ぼく、この本のファンになった！","ずっと取っておいて！","このへんさ、完璧！","もう表紙だけで優勝してる！"
- ];
- const arr=s<=3?low:s<=6?mid:s<=8?high:top;
- let c=arr[Math.floor(Math.random()*arr.length)];
+  "これより好きなの作れるの！？","ぼく、この本のファンになった！","ずっと取っておいて！","このへんさ、完璧！","もう表紙だけで優勝してる！",
+  "点数10までしかないの誰が決めたの！？","この本、家宝にしよう。家宝ってなに？","ぼく今からこの本の宣伝する！誰に？みんなに！","タイトルが強すぎて口が勝手に笑った！","これ、読んでない人に電話したい！",
+  "ぼくの中の審査員が全員立った！","明日忘れてても、表紙見たらまた笑うと思う！","これだけ別の棚に置こう。『すごい棚』。","なんでこんなに好きなのか説明できない！だから最高！","この本に点数つけるんじゃなくて、点数がこの本についてきて！",
+  "ぼく、これの発売日に並ぶ。今日発売？","これ作った人、たぶんちょっと変。最高。","読み終わったのにまだ読んでる気分！","タイトルを言う係、ぼくがやる！","この本、拍手すると喜びそう！",
+  "最高すぎて急に静かになっちゃった。","これ、棚のいちばん目立つところね！","ぼくが大人になっても覚えてたらどうする！？","次の本がかわいそうになるくらい好き！","この変さ、国で守ったほうがいい。",
+  "これ一冊で今日よかったってなる！","もう点数じゃなくて金メダルあげたい！","表紙を見せるだけの会を開きたい！","ぼくの好きが渋滞してる！","この本、なんか勝手に伝説になりそう！",
+  "読んだ瞬間、今日の一位ってわかった！","題名だけでごはん三杯……は無理だけど、かなり好き！","これ、ぼくの机に置いたら勉強しないでずっと見る。","最高。理由はあとで考える！","これを超えるならもっと変になるしかないよ！"
+ ],
+ weird:[
+  "この本、たぶん冷蔵庫より賢い。","読んでたら右のくつしたが気になってきた。","ぼくのひざが『これは好き』って言ってる。","これ、木曜日の味がする。木曜日食べたことないけど。","本なのにちょっと足が速そう。",
+  "いま部屋の空気が一回だけ『え？』ってなった。","このタイトル、たぶん夜中に一センチ伸びる。","ぼくは好き。ぼくの左ひじはまだ迷ってる。","これ読んだら麦茶がちょっと濃く見える。","表紙のうしろに誰か隠れてない？……いないね。",
+  "この本、廊下に置いたら廊下が喜びそう。","なんかおにぎりに謝りたくなった。関係ないけど。","タイトルが一回こっちを見た気がした。","読んだ瞬間、遠くでベルが鳴った気がする。鳴ってない。","この本はたぶん靴をはかないタイプ。",
+  "ぼく、今だけ名字をこの本と同じにしてもいい。","この本、雨の日だけ3点くらい増えそう。","意味はわからない。でも意味のほうが悪い。","これを読んだあと普通のイスに座れなくなりそう。","ページを閉じたらタイトルだけ机に残りそう。",
+  "ぼくの頭の中で小さい会議が始まった。","これは絵本というより、絵本のふりをした何か。","読んだら一回だけ時計がこっち見た。","この本、たぶんエレベーターでは二階を押す。","タイトルに税金かかりそうなくらい強い。",
+  "ぼくの中の知らないおじさんが拍手してる。誰？","これ、玄関に置いたら家が一個増えそう。","読んだあと水を飲んだら普通の水で安心した。","この表紙、たぶんジャンケン強い。","なんか知らないけど今だけ背が1ミリ伸びた気がする。",
+  "本棚に入れたら夜だけ場所変わってそう。","この本、たぶん自分の誕生日知ってる。","ぼくの右足だけ8点って言ってる。","読んでたら急に昨日の給食思い出した。","タイトルがこっちより先に笑ってる。",
+  "これ、図書館で借りたら返す日に迷う。","本なのに『今日は休みます』って言いそう。","この一冊だけ重力がちょっと違う。","ぼく、この本と目を合わせないようにしてる。好きだから。","たぶんこの本、寝る時は横向き。"
+ ]
+};
+function pickFreshCommentBase(arr){
+ const recent=new Set(state.recentCommentBases||[]),fresh=arr.filter(x=>!recent.has(x)),pool=fresh.length?fresh:arr;
+ return pool[Math.floor(Math.random()*pool.length)];
+}
+function rememberComment(base,full){
+ state.recentCommentBases=[...(state.recentCommentBases||[]),base].slice(-36);
+ state.recentComments=[...(state.recentComments||[]),full].slice(-60);
+}
+function commentFor(s,b){
+ const tier=s<=3?"low":s<=6?"mid":s<=8?"high":"top";
+ const useWeird=Math.random()<(s>=7?.20:.12);
+ const base=pickFreshCommentBase(useWeird?COMMENT_BANKS.weird:COMMENT_BANKS[tier]);
+ let c=base;
  const extras=[];
- if(b.itemName) extras.push(` ${b.itemEmoji} ${b.itemName}を入れたの、そこ好き。`,` ${b.itemEmoji}が出てくるだけでちょっと笑う。`,` ${b.itemName}の使いかた、へんでいい。`);
- if(b.character) extras.push(` ${b.character}、また出して！`,` ${b.character}の顔が頭にのこる。`);
- extras.push(" でも次はもっとへんでもいいよ。"," これ、あとで思い出しそう。"," タイトルもう一回言って！");
- if(Math.random()<.32)c+=extras[Math.floor(Math.random()*extras.length)];
+ if(b.itemName) extras.push(
+  ` ${b.itemEmoji} ${b.itemName}を入れたの、そこ好き。`,
+  ` 「${b.itemName}」って口に出すとさらに変だね。`,
+  ` ${b.itemName}だけ急に自信ありそう。`,
+  ` ${b.itemName}の使いかた、誰に教わったの？`,
+  ` ${b.itemEmoji}が出てきたところで一回笑った。`,
+  ` ぼくなら${b.itemName}をもう一回だけ出す。意味なく。`,
+  ` ${b.itemName}、この本に入ると思ってなかったでしょ。ぼくも。`,
+  ` ${b.itemName}が全部持っていってる気もする。`
+ );
+ if(b.character) extras.push(
+  ` ${b.character}、また出して！`,
+  ` ${b.character}の顔が頭にのこる。`,
+  ` ${b.character}、このあと普通に帰れたのかな。`,
+  ` ${b.character}にはこのタイトルをまだ秘密にしたい。`,
+  ` ${b.character}が一番びっくりしてそう。`,
+  ` ぼく、${b.character}に一個だけ質問したい。`,
+  ` ${b.character}、次はもっと変な目にあってほしい。`,
+  ` ${b.character}のこと、ちょっと応援したくなった。`
+ );
+ extras.push(
+  " でも次はもっとへんでもいいよ。"," これ、あとで急に思い出しそう。"," タイトルもう一回言って！"," なんでかは聞かないで。ぼくも知らない。",
+  " いま点数つけたけど、明日ちょっと上がるかも。"," ここだけの話、ちょっと好き。"," もう一冊いける？"," 変なところがちゃんと変でよかった。",
+  " これを考えた時の顔を見たかった。"," 一回だけ逆さにして見てもいい？"," 友だちには説明しないでそのまま見せたい。"," ぼくの中でまだ会議中。",
+  " 今日はこういうのを待ってた気がする。"," 次はタイトルをもっと長くしてもいいよ。逆に一文字でもいい。"," なんか負けた気がする。何に？"," 表紙だけ先に夢に出そう。"
+ );
+ if(Math.random()<.56)c+=extras[Math.floor(Math.random()*extras.length)];
+ if(Math.random()<.10){const tails=[" ……以上！"," たぶん！"," しらんけど！"," ぼく5さいだけど！"," いま決めた！"," 明日は違うこと言うかも！"];c+=tails[Math.floor(Math.random()*tails.length)];}
+ // 直近60件と完全一致した場合は、さらに短い一言を足して被りを回避。
+ if((state.recentComments||[]).includes(c)) c+=" 今日は特にそう思った！";
+ rememberComment(base,c);
  return c;
 }
 function readBook(id){
@@ -703,13 +783,94 @@ function showBookDetail(id){
  show("result");
 }
 
+function loadCanvasImage(src){
+ return new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src;});
+}
+function drawResultText(ctx,text,x,y,maxWidth,lineHeight,maxLines=6){
+ let line="",lines=[];
+ for(const ch of String(text||"")){
+  const test=line+ch;
+  if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;if(lines.length>=maxLines-1)break;}else line=test;
+ }
+ if(line&&lines.length<maxLines)lines.push(line);
+ lines.forEach((l,i)=>ctx.fillText(l,x,y+i*lineHeight));
+ return y+lines.length*lineHeight;
+}
+async function createWeeklyResultBlob(){
+ const data=weeklyResultCache;if(!data)throw new Error("result unavailable");
+ const c=document.createElement("canvas");c.width=1080;c.height=1350;const x=c.getContext("2d");
+ const bg=x.createLinearGradient(0,0,0,1350);bg.addColorStop(0,"#e9f7ff");bg.addColorStop(.34,"#fff8e9");bg.addColorStop(1,"#f4e5cf");x.fillStyle=bg;x.fillRect(0,0,1080,1350);
+ x.fillStyle="#119de2";roundRect(x,55,55,970,205,42);x.fill();
+ x.textAlign="center";x.fillStyle="#fff";x.font="900 55px sans-serif";x.fillText("読み聞かせるね チュゴンくん",540,135);
+ x.font="900 44px sans-serif";x.fillText(`${data.week}週目 リザルト`,540,205);
+ if(!data.bests.length){
+  x.fillStyle="#40342d";x.font="900 58px sans-serif";x.fillText("今週は評価された絵本なし！",540,555);
+  x.font="700 34px sans-serif";x.fillText("次の1週間で最高の一冊を作ろう！",540,625);
+ }else{
+  const score=data.bests[0].rating;
+  x.fillStyle="#40342d";x.font="900 40px sans-serif";x.fillText(data.bests.length>1?`🏆 同率最高評価 ${data.bests.length}冊`:`🏆 今週の最高評価`,540,325);
+  x.fillStyle="#ef8d3c";x.font="1000 92px sans-serif";x.fillText(`⭐ ${score} / 10`,540,425);
+  if(data.bests.length===1){
+   const b=data.bests[0],img=await loadCanvasImage(b.cover);
+   x.drawImage(img,85,500,365,487);
+   x.textAlign="left";x.fillStyle="#40342d";x.font="900 42px sans-serif";
+   let yy=drawResultText(x,`『${b.title}』`,500,555,490,54,4);
+   x.font="800 28px sans-serif";x.fillStyle="#796b62";yy+=24;
+   yy=drawResultText(x,`${b.itemEmoji} ${b.itemName}`,500,yy,490,38,2);
+   x.fillStyle="#fff";roundRect(x,480,yy+28,520,285,30);x.fill();
+   x.fillStyle="#40342d";x.font="900 29px sans-serif";x.fillText("👦 チュゴンくん",515,yy+78);
+   x.font="800 28px sans-serif";x.fillStyle="#5d5148";drawResultText(x,`「${b.comment}」`,515,yy+125,450,39,5);
+  }else{
+   const shown=data.bests.slice(0,3),gap=35,w=280,h=373,startX=(1080-(shown.length*w+(shown.length-1)*gap))/2;
+   for(let i=0;i<shown.length;i++){
+    const b=shown[i],img=await loadCanvasImage(b.cover),px=startX+i*(w+gap);
+    x.drawImage(img,px,500,w,h);
+    x.textAlign="center";x.fillStyle="#40342d";x.font="900 27px sans-serif";drawResultText(x,`『${b.title}』`,px+w/2,920,w,35,3);
+   }
+   if(data.bests.length>3){x.textAlign="center";x.font="800 30px sans-serif";x.fillStyle="#796b62";x.fillText(`ほか ${data.bests.length-3}冊も同率ベスト！`,540,1055);}
+  }
+ }
+ x.textAlign="center";x.fillStyle="#6f6259";x.font="800 27px sans-serif";x.fillText(`作成 ${data.created}冊 ・ 評価した本 ${data.rated}冊`,540,1210);
+ x.font="800 25px sans-serif";x.fillText("#読み聞かせるねチュゴンくん",540,1270);
+ return await new Promise((resolve,reject)=>c.toBlob(b=>b?resolve(b):reject(new Error("image failed")),"image/png"));
+}
+function downloadBlob(blob,name){
+ const url=URL.createObjectURL(blob),a=document.createElement("a");a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1500);
+}
+function prepareWeeklyResultImage(){
+ weeklyResultBlob=null;
+ createWeeklyResultBlob().then(blob=>{
+  weeklyResultBlob=blob;
+  const save=document.querySelector("[data-save-week]"),share=document.querySelector("[data-share-week]");
+  if(save){save.disabled=false;save.textContent="🖼️ 画像保存";}
+  if(share){share.disabled=false;share.textContent="📤 共有";}
+ }).catch(()=>{
+  document.querySelectorAll("[data-save-week],[data-share-week]").forEach(btn=>{btn.disabled=true;btn.textContent="画像作成エラー";});
+ });
+}
+function saveWeeklyResultImage(){
+ if(!weeklyResultBlob){toast("共有画像を準備しています");return;}
+ downloadBlob(weeklyResultBlob,`chugon-week-${weeklyResultCache.week}-result.png`);toast("リザルト画像を保存しました！");
+}
+function shareWeeklyResult(){
+ if(!weeklyResultBlob){toast("共有画像を準備しています");return;}
+ try{
+  const file=new File([weeklyResultBlob],`chugon-week-${weeklyResultCache.week}-result.png`,{type:"image/png"}),score=weeklyResultCache.bests[0]?.rating;
+  if(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]}))){
+   navigator.share({title:"読み聞かせるね チュゴンくん",text:score?`${weeklyResultCache.week}週目の最高評価は⭐${score}/10！`:`${weeklyResultCache.week}週目のリザルト！`,files:[file]}).catch(e=>{if(e?.name!=="AbortError")toast("共有できませんでした");});
+  }else{downloadBlob(weeklyResultBlob,file.name);toast("共有に対応していないため画像を保存しました");}
+ }catch(e){toast("共有できませんでした");}
+}
 function restDay(){
  if(state.day<7){
   const d=state.daily;
   showModal(`<h2>🌙 ${state.day}日目終了</h2><p>📸 写真保存 ${d.photos}枚<br>🎰 ガチャ ${d.gacha}回<br>🏃 バイト ${d.timey}回<br>🖋️ 新作 ${d.books}冊<br>👦 読み聞かせ ${d.reads}回</p><button class="bigbtn primary" data-next-day>☀️ ${state.day+1}日目へ</button><button class="ghost" data-close-modal style="margin-top:8px">まだ起きてる</button>`);
  }else{
-  const weekly=state.books.filter(b=>b.week===state.week&&b.rating),best=weekly.length?weekly.reduce((a,b)=>b.rating>a.rating?b:a):null;
-  showModal(`<h2>🎉 ${state.week}週目 終了！</h2>${best?`<p>🏆 今週のベスト</p><img src="${best.cover}" style="width:150px;aspect-ratio:3/4;object-fit:cover;border-radius:14px"><h2>⭐${best.rating}<br>『${esc(best.title)}』</h2>`:"<p>今週は評価された本がありませんでした。</p>"}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><button class="bigbtn primary" data-next-week style="margin-top:10px">☀️ 新しい1週間へ</button>`);
+  const weekly=state.books.filter(b=>b.week===state.week&&b.rating),score=weekly.length?Math.max(...weekly.map(b=>b.rating)):0,bests=weekly.filter(b=>b.rating===score);
+  const created=state.books.filter(b=>b.week===state.week).length;weeklyResultCache={week:state.week,bests:[...bests],created,rated:weekly.length};
+  const bestHtml=bests.length?`<p>🏆 今週の最高評価${bests.length>1?`（同率 ${bests.length}冊）`:""}</p><div style="display:grid;grid-template-columns:repeat(${Math.min(3,bests.length)},1fr);gap:8px;margin:8px 0 12px">${bests.slice(0,3).map(b=>`<div><img src="${b.cover}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><b style="display:block;margin-top:5px">⭐${b.rating}</b><span style="font-size:11px;font-weight:800">『${esc(b.title)}』</span></div>`).join("")}</div>${bests.length>3?`<p class="muted">ほか ${bests.length-3}冊も同率ベスト！</p>`:""}`:`<p>今週は評価された本がありませんでした。</p>`;
+  showModal(`<h2>🎉 ${state.week}週目 終了！</h2>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="row" style="margin-top:10px"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><button class="bigbtn primary" data-next-week style="margin-top:10px;width:100%">☀️ 新しい1週間へ</button>`);
+  prepareWeeklyResultImage();
  }
 }
 function nextDay(){
@@ -734,6 +895,8 @@ document.addEventListener("click",e=>{
  const rb=e.target.closest("[data-replace-book]");if(rb){replaceBook(rb.dataset.replaceBook);return;}
  const book=e.target.closest("[data-book]");if(book){showBookDetail(book.dataset.book);return;}
  const read=e.target.closest("[data-read-book]");if(read){readBook(read.dataset.readBook);return;}
+ if(e.target.closest("[data-save-week]")){saveWeeklyResultImage();return;}
+ if(e.target.closest("[data-share-week]")){shareWeeklyResult();return;}
  if(e.target.closest("[data-next-day]")){nextDay();return;}
  if(e.target.closest("[data-next-week]")){nextWeek();return;}
  const act=e.target.closest("[data-action]");if(act){
@@ -761,7 +924,8 @@ function init(){
  show("title");
 
  // IndexedDBの保存データはバックグラウンドで読み込む。
- loadState().then(()=>{
+ loadState().then(async()=>{
+   await migrateBookCovers();
    renderAll();
  }).catch(()=>{});
 
@@ -774,7 +938,7 @@ function runSelfTest(){
   const it=drawGacha();state.money-=500;state.inventory[it.id]=1;
   const gachaOK=state.money===1000&&state.inventory[it.id]===1;
   const job=JOBS[0];state.money+=1200;state.timeyUsed=true;state.hour+=job.hours;
-  const timeyOK=state.timeyUsed&&state.hour===13;
+  const timeyOK=state.timeyUsed&&state.hour===9+job.hours;
   state.album.push({id:"t",data:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",character:"テストネコ",day:1,week:1});
   const albumOK=state.album.length===1;
   const result=document.createElement("div");result.id="selftest";result.textContent=(gachaOK&&timeyOK&&albumOK)?"SELFTEST:PASS":"SELFTEST:FAIL";document.body.appendChild(result);
