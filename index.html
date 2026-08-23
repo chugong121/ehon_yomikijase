@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.1.2</title>
+<title>読み聞かせるね チュゴンくん α1.1.4</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -153,7 +153,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       </div>
       <div class="intro-card">
         <b>✍️ 絵本作家の名前</b>
-        <input id="writerNameInput" class="title-input" type="text" maxlength="24" placeholder="例：げんた" autocomplete="nickname">
+        <input id="writerNameInput" class="title-input" type="text" maxlength="24" placeholder="例：作家名" autocomplete="nickname">
         <span class="small">最初に作家名を決めて、「はじめる」でゲームを始めよう。</span>
       </div>
       <button id="startBtn" class="start-btn">▶︎ はじめる</button>
@@ -189,7 +189,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.1.2：絵本作家名の入力に対応。タイトルをもとに様々な絵本タッチの表紙を生成できます。</div>
+    <div class="footer-note">α1.1.4：絵本作家名の入力例をランダム表示。タイトルをもとに様々な絵本タッチの表紙を生成できます。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -368,6 +368,17 @@ function getCoverEndpoint(){
 }
 const cleanText=(v,max=80)=>String(v??"").replace(/[\r\n\t]+/g," ").replace(/\s{2,}/g," ").trim().slice(0,max);
 const getWriterName=v=>cleanText(v||state?.writerName||"",24)||"ななしの絵本作家";
+const WRITER_PLACEHOLDER_NAMES=[
+ "タモリ","黒柳徹子","大泉洋","芦田愛菜","阿部寛","所ジョージ","上白石萌音","ムロツヨシ",
+ "バカリズム","いとうせいこう","星野源","綾瀬はるか","サンドウィッチマン","内村光良","小峠英二",
+ "有吉弘行","友近","ハライチ岩井","若林正恭","劇団ひとり"
+];
+function randomWriterPlaceholder(){
+ const input=$("writerNameInput");
+ if(!input)return;
+ const name=WRITER_PLACEHOLDER_NAMES[Math.floor(Math.random()*WRITER_PLACEHOLDER_NAMES.length)];
+ input.placeholder=`例：${name}`;
+}
 const photoLabel=p=>cleanText(p?.albumTitle||p?.character||"主役不明",40);
 const photoSubject=p=>cleanText(p?.analysis?.subject||p?.character||p?.albumTitle||"なぞのキャラ",30);
 
@@ -1218,7 +1229,7 @@ document.addEventListener("click",e=>{
 $("startBtn").addEventListener("click",()=>{
  const name=cleanText($("writerNameInput")?.value||"",24);
  if(!name){toast("絵本作家の名前を入れてね");$("writerNameInput")?.focus();return;}
- state.writerName=name;saveState();renderAll();show("home");
+ state.writerName=name;persistState();$("writerNameInput")?.blur();show("home");
 });
 $("restBtn").addEventListener("click",restDay);
 $("cameraInput").addEventListener("change",onCameraChange);
@@ -1236,6 +1247,7 @@ function init(){
    if(raw) state=Object.assign(clone(DEFAULT_STATE),JSON.parse(raw));
  }catch(_){}
  renderAll();
+ randomWriterPlaceholder();
  show("title");
 
  // IndexedDBの保存データはバックグラウンドで読み込む。
