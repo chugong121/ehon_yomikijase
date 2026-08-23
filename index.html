@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.2.1</title>
+<title>読み聞かせるね チュゴンくん α1.2.2</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -135,6 +135,12 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
  .home-title .a{font-size:22px}.home-title .b{font-size:29px}
  .story-illust::after{font-size:12px}
 }
+
+.pretty-title{margin:14px auto 10px;max-width:560px;background:linear-gradient(180deg,#fffdf8,#f8f1e5);border:1px solid #decfb9;border-radius:18px;padding:14px 18px;box-shadow:0 6px 16px rgba(92,69,42,.08);color:#4e3d31;line-height:1.45}
+.pretty-title .inner{font-size:clamp(25px,4.6vw,31px);font-weight:1000;letter-spacing:.02em}
+.pretty-title .deco{font-size:14px;color:#b4946d;margin-bottom:4px}
+.result-author{font-size:15px;color:var(--muted);margin-top:4px}
+
 </style>
 </head>
 <body>
@@ -380,6 +386,43 @@ function randomWriterPlaceholder(){
  input.placeholder=`例：${name}`;
 }
 const photoLabel=p=>cleanText(p?.albumTitle||p?.character||"主役不明",40);
+const NATURAL_STRONG_BREAKS="、。！？!?〜…";
+const NATURAL_SOFT_BREAKS="とがのをへにではもやから";
+function chooseTitleBreakIndex(s,start,end,ideal){
+ let best=-1,bestScore=1e9;
+ for(let i=Math.max(start,1);i<Math.min(end,s.length);i++){
+  const prev=s[i-1],next=s[i]||"";
+  let score=Math.abs(i-ideal)*3+12;
+  if(NATURAL_STRONG_BREAKS.includes(prev))score-=10;
+  else if(NATURAL_SOFT_BREAKS.includes(prev))score-=4;
+  if(next==="〜")score+=3;
+  if(score<bestScore){best=i;bestScore=score;}
+ }
+ return best>0?best:Math.min(end,Math.max(start,ideal));
+}
+function splitNaturalTitle(title,maxLines=3){
+ const s=cleanText(title||"",80).replace(/\s+/g,"");
+ if(!s)return [""];
+ const lines=[];let rest=s;
+ while(rest.length>16&&lines.length<maxLines-1){
+  const remain=maxLines-lines.length;
+  const ideal=Math.max(8,Math.round(rest.length/remain));
+  const idx=chooseTitleBreakIndex(rest,6,Math.min(rest.length-1,ideal+6),ideal);
+  lines.push(rest.slice(0,idx));rest=rest.slice(idx);
+ }
+ if(rest)lines.push(rest);
+ return lines;
+}
+function prettyTitleHTML(title){
+ const lines=splitNaturalTitle(title,3).slice();
+ if(!lines.length)return "『』";
+ lines[0]="『"+lines[0];
+ lines[lines.length-1]=lines[lines.length-1]+"』";
+ return lines.map(esc).join("<br>");
+}
+function prettyTitleCard(title){
+ return `<div class="pretty-title"><div class="deco">📖 できあがったタイトル</div><div class="inner">${prettyTitleHTML(title)}</div></div>`;
+}
 const photoSubject=p=>cleanText(p?.analysis?.subject||p?.character||p?.albumTitle||"なぞのキャラ",30);
 
 function openDB(){
@@ -859,18 +902,9 @@ function composeBookLikeCover(sourceImage,title,writerName){
     x.fillRect(62,60,6,680);
     x.restore();
 
-    fillRoundRect(x,74,58,452,104,16,palette.band);
-    strokeRoundRect(x,74,58,452,104,16,"rgba(183,165,145,.7)",1.1);
-    x.strokeStyle="rgba(193,177,159,.85)";x.lineWidth=1;
-    x.beginPath();x.moveTo(110,84);x.lineTo(490,84);x.stroke();
-    x.beginPath();x.moveTo(110,136);x.lineTo(490,136);x.stroke();
-    x.textAlign="center";x.textBaseline="middle";
-    x.fillStyle=palette.ink;x.strokeStyle="rgba(255,253,248,.95)";x.lineWidth=5;x.lineJoin="round";
-    drawFittedTitle(x,String(title||""),{centerX:300,centerY:112,maxWidth:378,boxHeight:90,maxLines:4,maxSize:32,minSize:17});
-
-    fillRoundRect(x,74,182,452,506,18,palette.artMat);
-    strokeRoundRect(x,74,182,452,506,18,"rgba(190,173,152,.72)",1.1);
-    const artX=89,artY=197,artW=422,artH=456;
+    fillRoundRect(x,74,72,452,590,18,palette.artMat);
+    strokeRoundRect(x,74,72,452,590,18,"rgba(190,173,152,.72)",1.1);
+    const artX=89,artY=87,artW=422,artH=560;
     x.save();
     roundRectPath(x,artX,artY,artW,artH,14);
     x.clip();
@@ -879,18 +913,13 @@ function composeBookLikeCover(sourceImage,title,writerName){
     x.restore();
 
     x.font="600 15px serif";
-    const authorW=Math.min(250,Math.ceil(x.measureText(authorLabel).width)+18);
+    const authorW=Math.min(260,Math.ceil(x.measureText(authorLabel).width)+18);
     x.fillStyle="rgba(255,253,248,.92)";
-    x.fillRect(95,661,authorW,26);
+    x.fillRect(95,621,authorW,26);
     x.fillStyle=palette.sub;
     x.textAlign="left";
     x.textBaseline="alphabetic";
-    x.fillText(authorLabel,100,679);
-
-    x.fillStyle=palette.sub;
-    x.font="600 14px serif";
-    x.textAlign="right";
-    x.fillText("よみきかせコレクション",505,731);
+    x.fillText(authorLabel,100,639);
 
     resolve(c.toDataURL("image/jpeg",.9));
    }catch(err){reject(err);}
@@ -1002,7 +1031,7 @@ function replaceBook(id){
 }
 function showBookComplete(b){
  const coverInfo=b.coverSource==="ai"?`<div class="notice success">📘 絵本らしい表紙に仕上がりました（${esc(b.coverStyle||"絵本タッチ")}）</div>`:`<div class="notice">📷 表紙を生成できなかったため、写真ベースの表紙で仕上げました。${b.coverError?`<br><span class="muted">${esc(b.coverError)}</span>`:""}</div>`;
- $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>${esc(getWriterName(b.writerName))}：さく<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
+ $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<p class="result-author">${esc(getWriterName(b.writerName))}：さく</p><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
  show("result");
 }
 
@@ -1132,13 +1161,13 @@ function readBook(id){
  if(!reread){const r=evaluate(b);b.rating=r.rating;b.comment=r.comment;}
  spendTime(2);state.daily.reads++;state.weeklyReads++;
  const newRecord=!reread&&b.rating>oldBest;commit();
- $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><div class="small" style="margin-bottom:8px">${esc(getWriterName(b.writerName))}：さく</div><div class="card"><b>👦「${esc(b.comment)}」</b></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
+ $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<div class="result-author">${esc(getWriterName(b.writerName))}：さく</div><div class="card"><b>👦「${esc(b.comment)}」</b></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
  show("result");
 }
 function showBookDetail(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
  const styleInfo=b.coverSource==="ai"?`<div class="small" style="margin:8px 0">🎨 ${esc(b.coverStyle||"AI絵本タッチ")}</div>`:"";
- $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>${esc(getWriterName(b.writerName))}：さく<br>📅 ${b.week}週目 ${b.day}日目</p>${styleInfo}${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。AI画像生成のAPIクレジットを使用します。</div><button class="bigbtn" data-read-book="${b.id}" style="margin-top:10px">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
+ $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<p class="result-author">${esc(getWriterName(b.writerName))}：さく</p><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.week}週目 ${b.day}日目</p>${styleInfo}${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。AI画像生成のAPIクレジットを使用します。</div><button class="bigbtn" data-read-book="${b.id}" style="margin-top:10px">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
  show("result");
 }
 
@@ -1181,11 +1210,23 @@ async function getBestBookResultBlob(book){
  const promise=createBestBookResultBlob(book).catch(e=>{bestResultBlobCache.delete(book.id);throw e;});
  bestResultBlobCache.set(book.id,promise);return promise;
 }
+function canShareFile(file){
+ return !!(navigator.share&&(!navigator.canShare||navigator.canShare({files:[file]})));
+}
+async function saveBlobImage(blob,name){
+ const file=new File([blob],name,{type:blob.type||"image/png"});
+ if(canShareFile(file)){
+  await navigator.share({title:"読み聞かせるね チュゴンくん",files:[file]});
+  toast("共有シートから『画像を保存』を選ぶとカメラロールに保存できます");
+ }else{
+  downloadBlob(blob,name);toast("画像を保存しました！");
+ }
+}
 async function saveBestBookImage(id,button){
  const book=state.books.find(b=>b.id===id);if(!book)return;
  const original=button?.textContent;if(button){button.disabled=true;button.textContent="🖼️ 作成中…";}
- try{const blob=await getBestBookResultBlob(book);downloadBlob(blob,`chugon-best-${book.rating}of10-${book.id}.png`);toast("最高評価絵本の画像を保存しました！");}
- catch(_){toast("画像を作成できませんでした");}
+ try{const blob=await getBestBookResultBlob(book);await saveBlobImage(blob,`chugon-best-${book.rating}of10-${book.id}.png`);}
+ catch(e){if(e?.name!=="AbortError")toast("画像を作成できませんでした");}
  finally{if(button){button.disabled=false;button.textContent=original||"🖼️ 画像保存";}}
 }
 async function shareBestBookImage(id,button){
@@ -1252,9 +1293,9 @@ function prepareWeeklyResultImage(){
   document.querySelectorAll("[data-save-week],[data-share-week]").forEach(btn=>{btn.disabled=true;btn.textContent="画像作成エラー";});
  });
 }
-function saveWeeklyResultImage(){
+async function saveWeeklyResultImage(){
  if(!weeklyResultBlob){toast("共有画像を準備しています");return;}
- downloadBlob(weeklyResultBlob,`chugon-week-${weeklyResultCache.week}-result.png`);toast("リザルト画像を保存しました！");
+ await saveBlobImage(weeklyResultBlob,`chugon-week-${weeklyResultCache.week}-result.png`);
 }
 function shareWeeklyResult(){
  if(!weeklyResultBlob){toast("共有画像を準備しています");return;}
