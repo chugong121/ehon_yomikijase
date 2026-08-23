@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.0</title>
+<title>読み聞かせるね チュゴンくん α1.0.1</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -179,7 +179,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.0：AI写真解析の第1段階。撮影した写真からアルバム名・主役・状況・場所・雰囲気・キーワードを自動生成し、次のAI絵本生成に使える情報として保存します。</div>
+    <div class="footer-note">α1.0.1：AI写真解析のiPhone/Safari接続修正版。撮影した写真からアルバム名・主役・状況・場所・雰囲気・キーワードを自動生成し、次のAI絵本生成に使える情報として保存します。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -533,7 +533,14 @@ async function analyzeCapturedPhoto(){
  setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…',"wait");
  const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
  try{
-  const res=await fetch(endpoint,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({image:capturedData}),signal:ctrl.signal});
+  // iPhone / Safari 互換性のためカスタム headers を付けずに送信する。
+  // Edge Function 側は req.json() で本文を解析するため Content-Type 明示は不要。
+  const res=await fetch(endpoint,{
+   method:"POST",
+   body:JSON.stringify({image:capturedData}),
+   signal:ctrl.signal,
+   cache:"no-store"
+  });
   let body=null;try{body=await res.json()}catch(_){body={}}
   if(!res.ok)throw new Error(body?.error||`HTTP ${res.status}`);
   const a=normalizePhotoAnalysis(body);
