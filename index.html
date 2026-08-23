@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.0.2</title>
+<title>読み聞かせるね チュゴンくん α1.1</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -179,7 +179,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.0.2：AI写真解析のiPhone/Safari XHR接続修正版。撮影した写真からアルバム名・主役・状況・場所・雰囲気・キーワードを自動生成し、次のAI絵本生成に使える情報として保存します。</div>
+    <div class="footer-note">α1.1：AI写真解析に加え、完成したタイトルをもとに様々な絵本タッチのAI表紙を生成します。表紙だけの作り直しにも対応。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -189,7 +189,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
         <div class="help-item"><h3>🎯 目的</h3><p><span class="help-line">・1週間（7日間）で、チュゴンくんから高評価をもらえる絵本を作ろう。</span><span class="help-line">・評価は <b>⭐1〜10</b>！</span></p></div>
         <div class="help-item"><h3>🕘 時間</h3><p><span class="help-line">・1日は <b>9:00〜21:00</b>。</span><span class="help-line">・📸 撮影だけ：0時間 ／ 写真保存：+1時間</span><span class="help-line">・🎰 ガチャ：+1時間 ／ 🖋️ 絵本作成：+2時間</span><span class="help-line">・👦 読み聞かせ：+2時間 ／ 🏃 タイミー：2〜8時間</span></p></div>
         <div class="help-item"><h3>📸 写真</h3><p><span class="help-line">・写真は好きなだけ撮影できます。</span><span class="help-line">・撮影するとAIが写真を読み取り、<b>アルバム名</b>を自動で考えます。</span><span class="help-line">・AIは主役・状況・場所・雰囲気・キーワードも一緒に記録します。</span><span class="help-line">・アルバム名は保存前に自分で直すこともできます。</span><span class="help-line">・アルバムは <b>最大9枚</b>。</span><span class="help-line">・いっぱいの時は、残したい写真と交換して保存します。</span></p></div>
-        <div class="help-item"><h3>🤖 AI写真判定</h3><p><span class="help-line">・AIの秘密キーはこのHTMLには保存しません。</span><span class="help-line">・ゲームから安全な中継先（Supabase Edge Function）へ写真を送り、そこでAI判定します。</span><span class="help-line">・接続前でも手入力で遊べます。</span></p><button class="ghost" data-ai-settings style="width:100%;margin-top:10px">⚙️ AI接続設定</button></div>
+        <div class="help-item"><h3>🤖 AI写真判定・AI表紙</h3><p><span class="help-line">・AIの秘密キーはこのHTMLには保存しません。</span><span class="help-line">・写真はSupabase Edge Function経由でAIが読み取り、アルバム名を提案します。</span><span class="help-line">・絵本のタイトルは今まで通りゲーム内で決定し、そのタイトル・写真の解析情報・アイテムをもとにAIが文字なしの表紙イラストを描きます。</span><span class="help-line">・絵柄は水彩、色鉛筆、貼り絵など様々な絵本タッチからランダムに選ばれます。</span><span class="help-line">・完成後はタイトルを変えずに「表紙だけ作り直す」こともできます。</span></p><button class="ghost" data-ai-settings style="width:100%;margin-top:10px">⚙️ AI接続設定</button></div>
         <div class="help-item"><h3>🎰 ガチャ</h3><p><span class="help-line">・1回 <b>500円</b>。</span><span class="help-line">・C / R / SR / SSR、全部で <b>300アイテム</b>。</span><span class="help-line">・絵本作成に使ったアイテムは1個消費します。</span></p><button class="ghost" data-open-itemdex="help" style="width:100%;margin-top:10px">🎁 アイテム一覧</button></div>
         <div class="help-item"><h3>🏃 タイミー</h3><p><span class="help-line">・働けるのは <b>1日1回</b>。</span><span class="help-line">・毎日ランダムに出る3つの仕事から選びます。</span><span class="help-line">・仕事によって <b>2〜8時間</b>、もらえる金額も大きく変わります。</span></p></div>
         <div class="help-item"><h3>🖋️ 絵本</h3><p><span class="help-line">・アルバムの写真1枚＋アイテム1個で絵本を作ります。</span><span class="help-line">・組み合わせから、タイトルと表紙ができあがります。</span><span class="help-line">・本棚は <b>最大12冊</b>。</span></p></div>
@@ -349,6 +349,12 @@ const itemById=id=>ITEMS.find(x=>x.id===Number(id));
 const canSpend=h=>state.hour+h<=21;
 const AI_ENDPOINT_KEY="chugon_ai_endpoint_v1";
 const getAIEndpoint=()=>{try{return (localStorage.getItem(AI_ENDPOINT_KEY)||"").trim()}catch(_){return ""}};
+function getCoverEndpoint(){
+ const endpoint=getAIEndpoint();
+ if(!endpoint)return "";
+ if(/\/analyze-photo\/?$/i.test(endpoint))return endpoint.replace(/\/analyze-photo\/?$/i,"/generate-book-cover");
+ try{const u=new URL(endpoint);u.pathname=u.pathname.replace(/\/[^/]+\/?$/,"/generate-book-cover");return u.toString()}catch(_){return ""}
+}
 const cleanText=(v,max=80)=>String(v??"").replace(/[\r\n\t]+/g," ").replace(/\s{2,}/g," ").trim().slice(0,max);
 const photoLabel=p=>cleanText(p?.albumTitle||p?.character||"主役不明",40);
 const photoSubject=p=>cleanText(p?.analysis?.subject||p?.character||p?.albumTitle||"なぞのキャラ",30);
@@ -554,7 +560,7 @@ async function analyzeCapturedPhoto(){
  photoAnalysisBusy=true;
  $("reanalyzePhotoBtn").disabled=true;$("savePhotoBtn").disabled=true;
  $("albumTitleInput").value="";
- setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…<div class="ai-detail">通信方式: XHR / build α1.0.2</div>',"wait");
+ setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…<div class="ai-detail">通信方式: XHR / build α1.1</div>',"wait");
  try{
   const body=await postPhotoAnalysisXHR(endpoint,capturedData);
   const a=normalizePhotoAnalysis(body);
@@ -562,14 +568,14 @@ async function analyzeCapturedPhoto(){
   currentPhotoAnalysis=a;renderPhotoAnalysis(a);
  }catch(err){
   const msg=cleanText(err?.message||"AI判定に失敗しました",120);
-  setPhotoAiUI("判定できず",`${esc(msg)}<br><span class="ai-detail">build α1.0.2 / XHR</span><br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
+  setPhotoAiUI("判定できず",`${esc(msg)}<br><span class="ai-detail">build α1.1 / XHR</span><br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
  }finally{
   photoAnalysisBusy=false;$("reanalyzePhotoBtn").disabled=false;$("savePhotoBtn").disabled=false;
  }
 }
 function openAISettings(){
  const current=getAIEndpoint();
- showModal(`<h2>🤖 AI接続設定</h2><p class="ai-settings-note">ここには <b>Supabase Edge FunctionのURLだけ</b> を入れます。<br>OpenAI APIキーなどの秘密キーは絶対に入力しないでください。</p><input id="aiEndpointInput" type="text" value="${esc(current)}" placeholder="https://xxxxx.supabase.co/functions/v1/analyze-photo"><div class="row"><button class="bigbtn primary" data-save-ai-endpoint>保存</button><button class="ghost" data-close-modal>閉じる</button></div><button class="danger" data-clear-ai-endpoint style="width:100%;margin-top:8px">接続設定を消す</button>`);
+ showModal(`<h2>🤖 AI接続設定</h2><p class="ai-settings-note">ここには <b>写真解析用 analyze-photo のSupabase Edge Function URL</b> を入れます。<br>表紙生成用 <b>generate-book-cover</b> のURLは同じプロジェクトから自動で判定します。<br>OpenAI APIキーなどの秘密キーは絶対に入力しないでください。</p><input id="aiEndpointInput" type="text" value="${esc(current)}" placeholder="https://xxxxx.supabase.co/functions/v1/analyze-photo"><div class="row"><button class="bigbtn primary" data-save-ai-endpoint>保存</button><button class="ghost" data-close-modal>閉じる</button></div><button class="danger" data-clear-ai-endpoint style="width:100%;margin-top:8px">接続設定を消す</button>`);
 }
 function saveAIEndpoint(){
  const v=($("aiEndpointInput")?.value||"").trim();
@@ -726,20 +732,103 @@ function makeTitle(c,it){
  }
  return fallback||{title:trimTitle(`${c}と${it.name}の新しいおはなし`),kind:"王道"};
 }
+function postBookCoverXHR(endpoint,payload){
+ return new Promise((resolve,reject)=>{
+  let xhr;
+  try{
+   xhr=new XMLHttpRequest();
+   xhr.open("POST",endpoint,true);
+   // GPT Imageは複雑な表紙で時間がかかることがあるため長めに待つ。
+   xhr.timeout=135000;
+  }catch(err){reject(err);return;}
+  xhr.onload=()=>{
+   let body={};
+   try{body=JSON.parse(xhr.responseText||"{}")}catch(_){body={}}
+   if(xhr.status>=200&&xhr.status<300){resolve(body);return;}
+   reject(new Error(body?.error||`HTTP ${xhr.status||0}`));
+  };
+  xhr.onerror=()=>reject(new Error("AI表紙サーバーへ接続できませんでした"));
+  xhr.ontimeout=()=>reject(new Error("AI表紙生成がタイムアウトしました"));
+  xhr.onabort=()=>reject(new Error("AI表紙生成が中断されました"));
+  try{
+   // 写真解析と同じくSafari互換のためfetch/headersを使わない。
+   xhr.send(JSON.stringify(payload));
+  }catch(err){reject(err);}
+ });
+}
+function composeAICover(aiImage,title){
+ return new Promise((resolve,reject)=>{
+  const img=new Image();
+  img.onload=()=>{
+   try{
+    const c=document.createElement("canvas");c.width=600;c.height=800;const x=c.getContext("2d");
+    const scale=Math.max(600/img.width,800/img.height),w=img.width*scale,h=img.height*scale;
+    x.drawImage(img,(600-w)/2,(800-h)/2,w,h);
+    // AIには文字を描かせず、タイトルはゲーム側で必ず綺麗に合成する。
+    const g=x.createLinearGradient(0,480,0,800);g.addColorStop(0,"rgba(0,0,0,0)");g.addColorStop(.55,"rgba(0,0,0,.20)");g.addColorStop(1,"rgba(0,0,0,.78)");x.fillStyle=g;x.fillRect(0,430,600,370);
+    x.textAlign="center";x.textBaseline="alphabetic";x.strokeStyle="rgba(0,0,0,.48)";x.lineWidth=8;x.fillStyle="#fff";x.font="900 46px sans-serif";
+    wrapText(x,title,300,620,500,60);
+    resolve(c.toDataURL("image/jpeg",.86));
+   }catch(err){reject(err);}
+  };
+  img.onerror=()=>reject(new Error("生成画像を読み込めませんでした"));
+  img.src=aiImage;
+ });
+}
+async function generateAIBookCover(p,it,title,avoidStyle=""){
+ const endpoint=getCoverEndpoint();
+ if(!endpoint)throw new Error("AI接続URLが未設定です");
+ const a=p?.analysis||{};
+ const body=await postBookCoverXHR(endpoint,{
+  title,
+  albumTitle:photoLabel(p),
+  subject:photoSubject(p),
+  itemName:it?.name||"",
+  itemEmoji:it?.emoji||"",
+  rarity:it?.rarity||"",
+  avoidStyle,
+  analysis:{action:a.action||"",place:a.place||"",mood:a.mood||"",keywords:Array.isArray(a.keywords)?a.keywords.slice(0,6):[],description:a.description||""}
+ });
+ if(typeof body?.image!=="string"||!body.image.startsWith("data:image/"))throw new Error("AIから表紙画像が返りませんでした");
+ return {cover:await composeAICover(body.image,title),style:cleanText(body.styleLabel||body.style||"AI絵本タッチ",40),model:cleanText(body.model||"gpt-image-2",40)};
+}
 async function createBook(){
  if(!canSpend(2)){toast("今日はもう絵本を作る時間がありません");return;}
  const p=state.album.find(x=>x.id===selectedPhotoId),it=itemById(selectedItemId);
  if(!p||!it||(state.inventory[it.id]||0)<1){toast("素材が足りません");return;}
  const made=makeTitle(photoSubject(p),it);
- const messages=[["🖋️","絵本を執筆中…"],["💭","物語を考えています…"],["✨","タイトルを決めています…"],["🎨","表紙を描いています…"],["👶","チュゴンくんが楽しみに待っています…"]];
- showModal('<div class="loading-icon">🖋️</div><h2>絵本を執筆中…</h2>');
- for(const [icon,text] of messages){$("modal").innerHTML=`<div class="loading-icon">${icon}</div><h2>${text}</h2>`;await wait(460);}
- const cover=await makeCover(p.data,made.title);
+ let cover,coverSource="fallback",coverStyle="",coverModel="",coverError="";
+ showModal(`<div class="loading-icon">📕</div><h2>タイトル決定！</h2><p style="font-weight:1000">『${esc(made.title)}』</p><p class="muted">このタイトルをもとに絵本の表紙を考えます…</p>`);
+ await wait(600);
+ try{
+  $("modal").innerHTML=`<div class="loading-icon">🎨</div><h2>AIが表紙を描いています…</h2><p style="font-weight:1000">『${esc(made.title)}』</p><p class="muted">水彩・色鉛筆・貼り絵など、絵本らしいタッチをランダムに選んでいます。<br>少し時間がかかることがあります。</p>`;
+  const generated=await generateAIBookCover(p,it,made.title);
+  cover=generated.cover;coverSource="ai";coverStyle=generated.style;coverModel=generated.model;
+ }catch(err){
+  coverError=cleanText(err?.message||"AI表紙生成に失敗しました",120);
+  $("modal").innerHTML=`<div class="loading-icon">📷</div><h2>AI表紙を作れなかったので仮表紙を作っています…</h2><p class="muted">${esc(coverError)}</p>`;
+  await wait(500);
+  cover=await makeCover(p.data,made.title);
+ }
  closeModal();
- const book={id:uid(),title:made.title,titleKind:made.kind,cover,coverVersion:5,photoId:p.id,character:photoSubject(p),photoAlbumTitle:photoLabel(p),photoAnalysis:p.analysis||null,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
+ const book={id:uid(),title:made.title,titleKind:made.kind,cover,coverVersion:coverSource==="ai"?6:5,coverSource,coverStyle,coverModel,coverError,photoId:p.id,character:photoSubject(p),photoAlbumTitle:photoLabel(p),photoAnalysis:p.analysis||null,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
  state.inventory[it.id]--;spendTime(2);state.daily.books++;
  if(state.books.length>=12){pendingBook=book;commit();renderBookSwap();return;}
  state.books.push(book);commit();showBookComplete(book);
+}
+async function regenerateBookCover(id){
+ const b=state.books.find(x=>x.id===id);if(!b)return;
+ const p=state.album.find(x=>x.id===b.photoId),it=itemById(b.itemId);
+ if(!p||!it){toast("元の写真またはアイテム情報が見つかりません");return;}
+ if(!getCoverEndpoint()){toast("AI接続設定を確認してね");return;}
+ showModal(`<div class="loading-icon">🎨</div><h2>表紙だけ描き直しています…</h2><p style="font-weight:1000">『${esc(b.title)}』</p><p class="muted">タイトルはそのまま。新しい絵本タッチを選んで描き直します。<br>APIクレジットを使用します。</p>`);
+ try{
+  const generated=await generateAIBookCover(p,it,b.title,b.coverStyle||"");
+  b.cover=generated.cover;b.coverVersion=6;b.coverSource="ai";b.coverStyle=generated.style;b.coverModel=generated.model;b.coverError="";
+  commit();closeModal();toast(`🎨 ${generated.style} で表紙を描き直しました`);showBookDetail(b.id);
+ }catch(err){
+  closeModal();toast(`表紙生成失敗：${cleanText(err?.message||"エラー",70)}`);showBookDetail(b.id);
+ }
 }
 function makeCover(photo,title){
  return new Promise(resolve=>{
@@ -773,7 +862,7 @@ function removeLegacyCornerIcon(cover){
 async function migrateBookCovers(){
  let changed=false;
  for(const b of state.books){
-  if(b.coverVersion===5)continue;
+  if(Number(b.coverVersion)>=5)continue;
   const source=state.album.find(p=>p.id===b.photoId);
   try{
    b.cover=source?.data?await makeCover(source.data,b.title):await removeLegacyCornerIcon(b.cover);
@@ -797,7 +886,8 @@ function replaceBook(id){
  state.books[idx]=pendingBook;const b=pendingBook;pendingBook=null;commit();showBookComplete(b);
 }
 function showBookComplete(b){
- $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>📅 ${b.week}週目 ${b.day}日目</p><div class="notice success">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
+ const coverInfo=b.coverSource==="ai"?`<div class="notice success">🎨 AI表紙：${esc(b.coverStyle||"絵本タッチ")}</div>`:`<div class="notice">📷 AI表紙を生成できなかったため、写真の仮表紙です。${b.coverError?`<br><span class="muted">${esc(b.coverError)}</span>`:""}</div>`;
+ $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
  show("result");
 }
 
@@ -932,7 +1022,8 @@ function readBook(id){
 }
 function showBookDetail(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
- $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.week}週目 ${b.day}日目</p>${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-read-book="${b.id}">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
+ const styleInfo=b.coverSource==="ai"?`<div class="small" style="margin:8px 0">🎨 ${esc(b.coverStyle||"AI絵本タッチ")}</div>`:"";
+ $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>📅 ${b.week}週目 ${b.day}日目</p>${styleInfo}${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。AI画像生成のAPIクレジットを使用します。</div><button class="bigbtn" data-read-book="${b.id}" style="margin-top:10px">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
  show("result");
 }
 
@@ -1095,6 +1186,7 @@ document.addEventListener("click",e=>{
  const ci=e.target.closest("[data-create-item]");if(ci){selectedItemId=Number(ci.dataset.createItem);createConfirm();return;}
  const back=e.target.closest("[data-create-back]");if(back){back.dataset.createBack==="photo"?createStepPhoto():createStepItem();return;}
  if(e.target.closest("[data-create-final]")){createBook();return;}
+ const regen=e.target.closest("[data-regenerate-cover]");if(regen){regenerateBookCover(regen.dataset.regenerateCover);return;}
  const rb=e.target.closest("[data-replace-book]");if(rb){replaceBook(rb.dataset.replaceBook);return;}
  const book=e.target.closest("[data-book]");if(book){showBookDetail(book.dataset.book);return;}
  const read=e.target.closest("[data-read-book]");if(read){readBook(read.dataset.readBook);return;}
