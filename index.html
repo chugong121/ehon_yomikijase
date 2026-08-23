@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.2.0</title>
+<title>読み聞かせるね チュゴンくん α1.2.1</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -809,6 +809,36 @@ function strokeRoundRect(ctx,x,y,w,h,r,color,width=1){
  ctx.stroke();
  ctx.restore();
 }
+function splitTextLinesByWidth(ctx,text,maxWidth){
+ const src=String(text||"").replace(/\s+/g,"").trim();
+ if(!src)return [""];
+ const lines=[];
+ let line="";
+ for(const ch of src){
+  const test=line+ch;
+  if(ctx.measureText(test).width>maxWidth&&line){lines.push(line);line=ch;}else{line=test;}
+ }
+ if(line)lines.push(line);
+ return lines;
+}
+function drawFittedTitle(ctx,text,opt={}){
+ const centerX=opt.centerX??300,centerY=opt.centerY??108,maxWidth=opt.maxWidth??388,boxHeight=opt.boxHeight??104,maxLines=opt.maxLines??4;
+ const maxSize=opt.maxSize??34,minSize=opt.minSize??18,step=opt.step??1;
+ let best={size:minSize,lines:splitTextLinesByWidth(ctx,text,maxWidth),lineH:Math.round(minSize*1.25)};
+ for(let size=maxSize;size>=minSize;size-=step){
+  ctx.font=`900 ${size}px serif`;
+  const lines=splitTextLinesByWidth(ctx,text,maxWidth);
+  const lineH=Math.round(size*1.23);
+  const totalH=lineH*lines.length;
+  if(lines.length<=maxLines&&totalH<=boxHeight){best={size,lines,lineH};break;}
+  if(lines.length<best.lines.length||(lines.length===best.lines.length&&totalH<best.lineH*best.lines.length))best={size,lines,lineH};
+ }
+ ctx.font=`900 ${best.size}px serif`;
+ ctx.textAlign="center";
+ ctx.textBaseline="middle";
+ const startY=centerY-(best.lineH*(best.lines.length-1))/2;
+ best.lines.forEach((line,i)=>{ctx.strokeText(line,centerX,startY+i*best.lineH);ctx.fillText(line,centerX,startY+i*best.lineH);});
+}
 function composeBookLikeCover(sourceImage,title,writerName){
  return new Promise((resolve,reject)=>{
   const img=new Image();
@@ -816,6 +846,7 @@ function composeBookLikeCover(sourceImage,title,writerName){
    try{
     const c=document.createElement("canvas");c.width=600;c.height=800;const x=c.getContext("2d");
     const palette={bg:"#ede4d4",shadow:"rgba(76,55,36,.18)",outer:"#fffdfa",inner:"#f8f4ec",line:"#d8ccb9",band:"#fffdf8",ink:"#5d4a3a",sub:"#826c5b",artMat:"#fffaf1"};
+    const authorLabel=`えほん  ${getWriterName(writerName)}：作`;
     x.fillStyle=palette.bg;x.fillRect(0,0,600,800);
     x.save();
     x.shadowColor=palette.shadow;x.shadowBlur=18;x.shadowOffsetY=10;
@@ -828,19 +859,18 @@ function composeBookLikeCover(sourceImage,title,writerName){
     x.fillRect(62,60,6,680);
     x.restore();
 
-    fillRoundRect(x,74,58,452,94,16,palette.band);
-    strokeRoundRect(x,74,58,452,94,16,"rgba(183,165,145,.7)",1.1);
+    fillRoundRect(x,74,58,452,104,16,palette.band);
+    strokeRoundRect(x,74,58,452,104,16,"rgba(183,165,145,.7)",1.1);
     x.strokeStyle="rgba(193,177,159,.85)";x.lineWidth=1;
     x.beginPath();x.moveTo(110,84);x.lineTo(490,84);x.stroke();
-    x.beginPath();x.moveTo(110,126);x.lineTo(490,126);x.stroke();
+    x.beginPath();x.moveTo(110,136);x.lineTo(490,136);x.stroke();
     x.textAlign="center";x.textBaseline="middle";
     x.fillStyle=palette.ink;x.strokeStyle="rgba(255,253,248,.95)";x.lineWidth=5;x.lineJoin="round";
-    x.font="900 34px serif";
-    wrapText(x,String(title||""),300,106,390,38);
+    drawFittedTitle(x,String(title||""),{centerX:300,centerY:112,maxWidth:378,boxHeight:90,maxLines:4,maxSize:32,minSize:17});
 
-    fillRoundRect(x,74,172,452,430,18,palette.artMat);
-    strokeRoundRect(x,74,172,452,430,18,"rgba(190,173,152,.72)",1.1);
-    const artX=89,artY=187,artW=422,artH=400;
+    fillRoundRect(x,74,182,452,506,18,palette.artMat);
+    strokeRoundRect(x,74,182,452,506,18,"rgba(190,173,152,.72)",1.1);
+    const artX=89,artY=197,artW=422,artH=456;
     x.save();
     roundRectPath(x,artX,artY,artW,artH,14);
     x.clip();
@@ -848,14 +878,19 @@ function composeBookLikeCover(sourceImage,title,writerName){
     x.drawImage(img,artX+(artW-w)/2,artY+(artH-h)/2,w,h);
     x.restore();
 
-    fillRoundRect(x,74,625,452,96,16,palette.band);
-    strokeRoundRect(x,74,625,452,96,16,"rgba(183,165,145,.7)",1.1);
-    x.fillStyle=palette.sub;x.font="700 18px serif";x.textAlign="center";x.textBaseline="alphabetic";
-    x.fillText("えほん",300,653);
-    x.fillStyle=palette.ink;x.font="700 28px serif";
-    x.fillText(`${getWriterName(writerName)}：さく`,300,695);
-    x.fillStyle=palette.sub;x.font="600 15px serif";
-    x.fillText("よみきかせコレクション",300,717);
+    x.font="600 15px serif";
+    const authorW=Math.min(250,Math.ceil(x.measureText(authorLabel).width)+18);
+    x.fillStyle="rgba(255,253,248,.92)";
+    x.fillRect(95,661,authorW,26);
+    x.fillStyle=palette.sub;
+    x.textAlign="left";
+    x.textBaseline="alphabetic";
+    x.fillText(authorLabel,100,679);
+
+    x.fillStyle=palette.sub;
+    x.font="600 14px serif";
+    x.textAlign="right";
+    x.fillText("よみきかせコレクション",505,731);
 
     resolve(c.toDataURL("image/jpeg",.9));
    }catch(err){reject(err);}
