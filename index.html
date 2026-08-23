@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.1.4</title>
+<title>読み聞かせるね チュゴンくん α1.2.0</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -504,7 +504,7 @@ function renderItemDex(){
 function renderShelf(){
  $("shelfHead").textContent=`${state.books.length}/12`;
  if(!state.books.length){$("shelfGrid").innerHTML='<div class="empty" style="grid-column:1/-1">まだ絵本がありません。🖋️</div>';return;}
- $("shelfGrid").innerHTML=state.books.map(b=>`<div class="book" data-book="${b.id}"><img src="${b.cover}" alt=""><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">✍️ ${esc(getWriterName(b.writerName))}</span><br><span class="muted">${b.week}週目 ${b.day}日目</span></div></div>`).join("");
+ $("shelfGrid").innerHTML=state.books.map(b=>`<div class="book" data-book="${b.id}"><img src="${b.cover}" alt=""><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${esc(getWriterName(b.writerName))}：さく</span><br><span class="muted">${b.week}週目 ${b.day}日目</span></div></div>`).join("");
 }
 
 function openCamera(){show("camera");$("cameraInput").click();}
@@ -784,21 +784,88 @@ function postBookCoverXHR(endpoint,payload){
   }catch(err){reject(err);}
  });
 }
-function composeAICover(aiImage){
+function roundRectPath(ctx,x,y,w,h,r){
+ const rr=Math.max(0,Math.min(r,Math.min(w,h)/2));
+ ctx.beginPath();
+ ctx.moveTo(x+rr,y);
+ ctx.arcTo(x+w,y,x+w,y+h,rr);
+ ctx.arcTo(x+w,y+h,x,y+h,rr);
+ ctx.arcTo(x,y+h,x,y,rr);
+ ctx.arcTo(x,y,x+w,y,rr);
+ ctx.closePath();
+}
+function fillRoundRect(ctx,x,y,w,h,r,color){
+ ctx.save();
+ roundRectPath(ctx,x,y,w,h,r);
+ ctx.fillStyle=color;
+ ctx.fill();
+ ctx.restore();
+}
+function strokeRoundRect(ctx,x,y,w,h,r,color,width=1){
+ ctx.save();
+ roundRectPath(ctx,x,y,w,h,r);
+ ctx.strokeStyle=color;
+ ctx.lineWidth=width;
+ ctx.stroke();
+ ctx.restore();
+}
+function composeBookLikeCover(sourceImage,title,writerName){
  return new Promise((resolve,reject)=>{
   const img=new Image();
   img.onload=()=>{
    try{
     const c=document.createElement("canvas");c.width=600;c.height=800;const x=c.getContext("2d");
-    const scale=Math.max(600/img.width,800/img.height),w=img.width*scale,h=img.height*scale;
-    x.drawImage(img,(600-w)/2,(800-h)/2,w,h);
-    // タイトル文字は表紙画像へ重ねず、画像そのものを絵本らしく見せる。
-    resolve(c.toDataURL("image/jpeg",.86));
+    const palette={bg:"#ede4d4",shadow:"rgba(76,55,36,.18)",outer:"#fffdfa",inner:"#f8f4ec",line:"#d8ccb9",band:"#fffdf8",ink:"#5d4a3a",sub:"#826c5b",artMat:"#fffaf1"};
+    x.fillStyle=palette.bg;x.fillRect(0,0,600,800);
+    x.save();
+    x.shadowColor=palette.shadow;x.shadowBlur=18;x.shadowOffsetY=10;
+    fillRoundRect(x,34,24,532,752,24,palette.outer);
+    x.restore();
+    fillRoundRect(x,46,36,508,728,20,palette.inner);
+    strokeRoundRect(x,46,36,508,728,20,palette.line,1.4);
+    x.save();
+    x.fillStyle="rgba(170,150,128,.22)";
+    x.fillRect(62,60,6,680);
+    x.restore();
+
+    fillRoundRect(x,74,58,452,94,16,palette.band);
+    strokeRoundRect(x,74,58,452,94,16,"rgba(183,165,145,.7)",1.1);
+    x.strokeStyle="rgba(193,177,159,.85)";x.lineWidth=1;
+    x.beginPath();x.moveTo(110,84);x.lineTo(490,84);x.stroke();
+    x.beginPath();x.moveTo(110,126);x.lineTo(490,126);x.stroke();
+    x.textAlign="center";x.textBaseline="middle";
+    x.fillStyle=palette.ink;x.strokeStyle="rgba(255,253,248,.95)";x.lineWidth=5;x.lineJoin="round";
+    x.font="900 34px serif";
+    wrapText(x,String(title||""),300,106,390,38);
+
+    fillRoundRect(x,74,172,452,430,18,palette.artMat);
+    strokeRoundRect(x,74,172,452,430,18,"rgba(190,173,152,.72)",1.1);
+    const artX=89,artY=187,artW=422,artH=400;
+    x.save();
+    roundRectPath(x,artX,artY,artW,artH,14);
+    x.clip();
+    const scale=Math.max(artW/img.width,artH/img.height),w=img.width*scale,h=img.height*scale;
+    x.drawImage(img,artX+(artW-w)/2,artY+(artH-h)/2,w,h);
+    x.restore();
+
+    fillRoundRect(x,74,625,452,96,16,palette.band);
+    strokeRoundRect(x,74,625,452,96,16,"rgba(183,165,145,.7)",1.1);
+    x.fillStyle=palette.sub;x.font="700 18px serif";x.textAlign="center";x.textBaseline="alphabetic";
+    x.fillText("えほん",300,653);
+    x.fillStyle=palette.ink;x.font="700 28px serif";
+    x.fillText(`${getWriterName(writerName)}：さく`,300,695);
+    x.fillStyle=palette.sub;x.font="600 15px serif";
+    x.fillText("よみきかせコレクション",300,717);
+
+    resolve(c.toDataURL("image/jpeg",.9));
    }catch(err){reject(err);}
   };
   img.onerror=()=>reject(new Error("生成画像を読み込めませんでした"));
-  img.src=aiImage;
+  img.src=sourceImage;
  });
+}
+function composeAICover(aiImage,title,writerName){
+ return composeBookLikeCover(aiImage,title,writerName);
 }
 async function generateAIBookCover(p,it,title,avoidStyle=""){
  const endpoint=getCoverEndpoint();
@@ -815,7 +882,7 @@ async function generateAIBookCover(p,it,title,avoidStyle=""){
   analysis:{action:a.action||"",place:a.place||"",mood:a.mood||"",keywords:Array.isArray(a.keywords)?a.keywords.slice(0,6):[],description:a.description||""}
  });
  if(typeof body?.image!=="string"||!body.image.startsWith("data:image/"))throw new Error("AIから表紙画像が返りませんでした");
- return {cover:await composeAICover(body.image),style:cleanText(body.styleLabel||body.style||"絵本タッチ",40),model:cleanText(body.model||"gpt-image-2",40)};
+ return {cover:await composeAICover(body.image,title,getWriterName()),style:cleanText(body.styleLabel||body.style||"絵本タッチ",40),model:cleanText(body.model||"gpt-image-2",40)};
 }
 async function createBook(){
  if(!canSpend(2)){toast("今日はもう絵本を作る時間がありません");return;}
@@ -833,7 +900,7 @@ async function createBook(){
   coverError=cleanText(err?.message||"AI表紙生成に失敗しました",120);
   $("modal").innerHTML=`<div class="loading-icon">📷</div><h2>表紙を仕上げられなかったので仮表紙を作っています…</h2><p class="muted">${esc(coverError)}</p>`;
   await wait(500);
-  cover=await makeCover(p.data);
+  cover=await makeCover(p.data,made.title,getWriterName());
  }
  closeModal();
  const book={id:uid(),title:made.title,titleKind:made.kind,writerName:getWriterName(),cover,coverVersion:coverSource==="ai"?6:5,coverSource,coverStyle,coverModel,coverError,photoId:p.id,character:photoSubject(p),photoAlbumTitle:photoLabel(p),photoAnalysis:p.analysis||null,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
@@ -855,18 +922,8 @@ async function regenerateBookCover(id){
   closeModal();toast(`表紙生成失敗：${cleanText(err?.message||"エラー",70)}`);showBookDetail(b.id);
  }
 }
-function makeCover(photo){
- return new Promise(resolve=>{
-  const img=new Image();
-  img.onload=()=>{
-   const c=document.createElement("canvas");c.width=600;c.height=800;const x=c.getContext("2d");
-   const scale=Math.max(600/img.width,800/img.height),w=img.width*scale,h=img.height*scale;
-   x.drawImage(img,(600-w)/2,(800-h)/2,w,h);
-   const g=x.createLinearGradient(0,0,0,800);g.addColorStop(0,"rgba(255,255,255,.04)");g.addColorStop(.55,"rgba(0,0,0,.08)");g.addColorStop(1,"rgba(0,0,0,.16)");x.fillStyle=g;x.fillRect(0,0,600,800);
-   // 写真をできるだけ見せるため、タイトルや右上アイコンなどの装飾は置かない。
-   resolve(c.toDataURL("image/jpeg",.82));
-  };img.src=photo;
- });
+function makeCover(photo,title="",writerName=""){
+ return composeBookLikeCover(photo,title,writerName||getWriterName());
 }
 function removeLegacyCornerIcon(cover){
  return new Promise(resolve=>{
@@ -909,15 +966,15 @@ function replaceBook(id){
  state.books[idx]=pendingBook;const b=pendingBook;pendingBook=null;commit();showBookComplete(b);
 }
 function showBookComplete(b){
- const coverInfo=b.coverSource==="ai"?`<div class="notice success">🎨 表紙タッチ：${esc(b.coverStyle||"絵本タッチ")}</div>`:`<div class="notice">📷 表紙を生成できなかったため、写真の仮表紙です。${b.coverError?`<br><span class="muted">${esc(b.coverError)}</span>`:""}</div>`;
- $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>✍️ ${esc(getWriterName(b.writerName))}<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
+ const coverInfo=b.coverSource==="ai"?`<div class="notice success">📘 絵本らしい表紙に仕上がりました（${esc(b.coverStyle||"絵本タッチ")}）</div>`:`<div class="notice">📷 表紙を生成できなかったため、写真ベースの表紙で仕上げました。${b.coverError?`<br><span class="muted">${esc(b.coverError)}</span>`:""}</div>`;
+ $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>${esc(getWriterName(b.writerName))}：さく<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
  show("result");
 }
 
 function showRead(){
  show("read");
  if(!state.books.length){$("readArea").innerHTML='<div class="notice">本棚に絵本がありません。</div>';return;}
- $("readArea").innerHTML=`<p class="muted">読む絵本を選んでね。</p><div class="grid">${state.books.map(b=>`<div class="book" data-read-book="${b.id}"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">✍️ ${esc(getWriterName(b.writerName))}</span></div></div>`).join("")}</div>`;
+ $("readArea").innerHTML=`<p class="muted">読む絵本を選んでね。</p><div class="grid">${state.books.map(b=>`<div class="book" data-read-book="${b.id}"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${esc(getWriterName(b.writerName))}：さく</span></div></div>`).join("")}</div>`;
 }
 function humorBonus(b){
  const words=["パンツ","トイレ","ゾンビ","UFO","爆弾","トイレット","おばけ","巨大","踊る","終わらない","しゃべる","空飛ぶ","なぞ","あやしい","宇宙人","ロボット","カレー","ラーメン"];
@@ -1040,13 +1097,13 @@ function readBook(id){
  if(!reread){const r=evaluate(b);b.rating=r.rating;b.comment=r.comment;}
  spendTime(2);state.daily.reads++;state.weeklyReads++;
  const newRecord=!reread&&b.rating>oldBest;commit();
- $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><div class="small" style="margin-bottom:8px">✍️ ${esc(getWriterName(b.writerName))}</div><div class="card"><b>👦「${esc(b.comment)}」</b></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
+ $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><div class="small" style="margin-bottom:8px">${esc(getWriterName(b.writerName))}：さく</div><div class="card"><b>👦「${esc(b.comment)}」</b></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
  show("result");
 }
 function showBookDetail(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
  const styleInfo=b.coverSource==="ai"?`<div class="small" style="margin:8px 0">🎨 ${esc(b.coverStyle||"AI絵本タッチ")}</div>`:"";
- $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>✍️ ${esc(getWriterName(b.writerName))}<br>📅 ${b.week}週目 ${b.day}日目</p>${styleInfo}${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。AI画像生成のAPIクレジットを使用します。</div><button class="bigbtn" data-read-book="${b.id}" style="margin-top:10px">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
+ $("resultArea").innerHTML=`<img class="cover-large" src="${b.cover}"><h2>『${esc(b.title)}』</h2><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)} <span class="badge r-${b.rarity}">${b.rarity}</span><br>${esc(getWriterName(b.writerName))}：さく<br>📅 ${b.week}週目 ${b.day}日目</p>${styleInfo}${b.rating?`<div class="card"><h2>⭐${b.rating}/10</h2><p>👦「${esc(b.comment)}」</p></div><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div>`:'<div class="notice">まだ読み聞かせていません。</div>'}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。AI画像生成のAPIクレジットを使用します。</div><button class="bigbtn" data-read-book="${b.id}" style="margin-top:10px">👦 ${b.rating?"もう一度読む":"読み聞かせる"}</button><button class="ghost" data-nav="shelf" style="margin-top:8px">← 本棚へ</button>`;
  show("result");
 }
 
@@ -1180,7 +1237,7 @@ function restDay(){
  }else{
   const weekly=state.books.filter(b=>b.week===state.week&&b.rating),score=weekly.length?Math.max(...weekly.map(b=>b.rating)):0,bests=weekly.filter(b=>b.rating===score);
   const created=state.books.filter(b=>b.week===state.week).length;weeklyResultCache={week:state.week,bests:[...bests],created,rated:weekly.length};
-  const bestHtml=bests.length?`<p>🏆 今週の最高評価${bests.length>1?`（同率 ${bests.length}冊）`:""}</p><div style="display:grid;grid-template-columns:repeat(${Math.min(3,bests.length)},1fr);gap:8px;margin:8px 0 12px">${bests.slice(0,3).map(b=>`<div><img src="${b.cover}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><b style="display:block;margin-top:5px">⭐${b.rating}</b><span style="font-size:11px;font-weight:800">『${esc(b.title)}』</span><br><span style="font-size:10px;color:#7b6658">✍️ ${esc(getWriterName(b.writerName))}</span></div>`).join("")}</div>${bests.length>3?`<p class="muted">ほか ${bests.length-3}冊も同率ベスト！</p>`:""}`:`<p>今週は評価された本がありませんでした。</p>`;
+  const bestHtml=bests.length?`<p>🏆 今週の最高評価${bests.length>1?`（同率 ${bests.length}冊）`:""}</p><div style="display:grid;grid-template-columns:repeat(${Math.min(3,bests.length)},1fr);gap:8px;margin:8px 0 12px">${bests.slice(0,3).map(b=>`<div><img src="${b.cover}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><b style="display:block;margin-top:5px">⭐${b.rating}</b><span style="font-size:11px;font-weight:800">『${esc(b.title)}』</span><br><span style="font-size:10px;color:#7b6658">${esc(getWriterName(b.writerName))}：さく</span></div>`).join("")}</div>${bests.length>3?`<p class="muted">ほか ${bests.length-3}冊も同率ベスト！</p>`:""}`:`<p>今週は評価された本がありませんでした。</p>`;
   showModal(`<h2>🎉 ${state.week}週目 終了！</h2>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="row" style="margin-top:10px"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><button class="bigbtn primary" data-next-week style="margin-top:10px;width:100%">☀️ 新しい1週間へ</button>`);
   prepareWeeklyResultImage();
  }
