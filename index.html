@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.2.3</title>
+<title>読み聞かせるね チュゴンくん α1.3.0</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -141,6 +141,21 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
 .pretty-title .deco{font-size:14px;color:#b4946d;margin-bottom:4px}
 .result-author{font-size:15px;color:var(--muted);margin-top:4px}
 
+
+/* α1.3.0 作家活動・本棚・評価演出 */
+.author-profile{display:grid;grid-template-columns:auto 1fr auto;gap:10px;align-items:center;background:linear-gradient(145deg,#fffaf0,#f8efe0);border:1px solid #dfcfb8;border-radius:20px;padding:13px 14px;margin:12px 0}
+.author-profile .icon{font-size:36px}.author-profile .name{font-size:17px;font-weight:1000}.author-profile .rank{font-size:12px;color:#8a6b49;font-weight:900;margin-top:3px}.author-profile button{min-height:auto;padding:9px 11px;border-radius:14px}
+.rank-meter{height:7px;background:#eadfce;border-radius:999px;overflow:hidden;margin-top:7px}.rank-meter>span{display:block;height:100%;background:linear-gradient(90deg,#f4b04c,#e67845);border-radius:999px}
+#shelfGrid{padding:14px 10px 20px;border-radius:18px;background:linear-gradient(180deg,#f6ead8 0,#f6ead8 31%,#c99b68 31.5%,#a9784d 34%,#f6ead8 34.5%,#f6ead8 65%,#c99b68 65.5%,#a9784d 68%,#f6ead8 68.5%);box-shadow:inset 0 0 0 1px rgba(132,94,55,.12)}
+#shelfGrid .book{box-shadow:0 7px 11px rgba(80,55,32,.15);transition:.15s transform}.book[data-book]:nth-child(3n+1){transform:rotate(-.7deg)}.book[data-book]:nth-child(3n+2){transform:rotate(.35deg)}.book[data-book]:nth-child(3n){transform:rotate(.7deg)}
+.rating-reaction{margin:2px auto 12px;padding:11px 15px;border-radius:18px;max-width:360px;font-weight:1000;animation:ratingPop .48s cubic-bezier(.2,.8,.25,1.2)}
+.rating-reaction.low{background:#f4f0ec}.rating-reaction.mid{background:#fff2c9}.rating-reaction.high{background:#e6f6ed}.rating-reaction.top{background:#fff0b5;box-shadow:0 0 0 3px rgba(239,174,55,.14)}
+.rating-face{font-size:58px;display:block;animation:faceBounce .58s ease-out}.rating-label{font-size:18px;margin-top:2px}
+@keyframes ratingPop{0%{opacity:0;transform:scale(.82)}100%{opacity:1;transform:scale(1)}}@keyframes faceBounce{0%{transform:translateY(9px) scale(.7)}65%{transform:translateY(-4px) scale(1.12)}100%{transform:none}}
+.achievement-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:10px}.achievement{padding:11px;border-radius:15px;border:1px solid var(--line);background:#fff;text-align:left;min-height:88px}.achievement.locked{filter:grayscale(.75);opacity:.52}.achievement .aicon{font-size:25px}.achievement b{display:block;font-size:13px;margin:4px 0}.achievement span{font-size:11px;color:var(--muted);line-height:1.4;display:block}
+.week-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin:9px 0}.week-summary>div{background:#fff;border:1px solid var(--line);border-radius:13px;padding:9px 4px;font-weight:900}.week-summary small{display:block;color:var(--muted);font-size:10px;margin-top:3px}
+.reread-note{background:#edf6ff;border:1px solid #bfd8ee;border-radius:14px;padding:11px 13px;margin:9px 0;font-weight:800;line-height:1.5}
+
 </style>
 </head>
 <body>
@@ -191,11 +206,17 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <button id="restBtn" class="bigbtn" style="width:100%;margin-top:10px">🛏️ 今日はもう休む</button>
     </div>
 
+    <div id="authorProfileCard" class="author-profile">
+      <div class="icon">✍️</div>
+      <div><div id="authorProfileName" class="name">絵本作家</div><div id="authorRankText" class="rank">新人絵本作家</div><div class="rank-meter"><span id="authorRankMeter" style="width:0%"></span></div></div>
+      <button class="ghost" data-achievements>🏅 実績</button>
+    </div>
+
     <div class="card">
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.1.4：絵本作家名の入力例をランダム表示。タイトルをもとに様々な絵本タッチの表紙を生成できます。</div>
+    <div class="footer-note">α1.3.0：作家ランク・実績、評価リアクション、読み返しコメント、本棚演出を追加。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -349,7 +370,7 @@ const JOBS=[
  {emoji:"📚",name:"図書館の蔵書整理",hours:8,min:2700,max:4700,text:"本を並べ続けていたら、背表紙だけで内容を想像し始めた。"},
  {emoji:"🚩",name:"商店街イベント運営",hours:8,min:3200,max:5200,text:"呼び込みの声だけ、最後までやたら元気だった。"}
 ];
-const DEFAULT_STATE={week:1,day:1,hour:9,money:1500,timeyUsed:false,writerName:"",album:[],inventory:{},seen:{},books:[],weeklyReads:0,recentCommentBases:[],recentComments:[],daily:{photos:0,gacha:0,timey:0,books:0,reads:0}};
+const DEFAULT_STATE={week:1,day:1,hour:9,money:1500,timeyUsed:false,writerName:"",album:[],inventory:{},seen:{},books:[],weeklyReads:0,recentCommentBases:[],recentComments:[],career:{booksCreated:0,reads:0,tens:0,coversRegenerated:0,weeksCompleted:0},daily:{photos:0,gacha:0,timey:0,books:0,reads:0}};
 const clone=o=>JSON.parse(JSON.stringify(o));
 const $=id=>document.getElementById(id);
 let state=clone(DEFAULT_STATE);
@@ -464,6 +485,46 @@ async function loadState(){
    try{const raw=localStorage.getItem("chugon_alpha04_state");if(raw)state=Object.assign(clone(DEFAULT_STATE),JSON.parse(raw));}catch(_){}
  }
 }
+function ensureCareer(){
+ if(!state.career||typeof state.career!=="object")state.career=clone(DEFAULT_STATE.career);
+ const c=state.career;
+ c.booksCreated=Math.max(Number(c.booksCreated)||0,state.books.length);
+ c.reads=Math.max(Number(c.reads)||0,state.books.filter(b=>Number.isFinite(b.rating)).length);
+ c.tens=Math.max(Number(c.tens)||0,state.books.filter(b=>b.rating===10).length);
+ c.coversRegenerated=Number(c.coversRegenerated)||0;
+ c.weeksCompleted=Math.max(Number(c.weeksCompleted)||0,Math.max(0,(state.week||1)-1));
+ return c;
+}
+const AUTHOR_RANKS=[
+ {name:"新人絵本作家",min:0,icon:"✏️"},{name:"見習い絵本作家",min:10,icon:"🖍️"},{name:"町の絵本作家",min:25,icon:"📗"},{name:"人気絵本作家",min:50,icon:"🌟"},{name:"名作絵本作家",min:85,icon:"🏆"},{name:"伝説の絵本作家",min:130,icon:"👑"}
+];
+function authorScore(){const c=ensureCareer();return c.booksCreated*2+c.reads+c.tens*8+c.weeksCompleted*5+Math.min(10,c.coversRegenerated);}
+function authorRank(){const score=authorScore();let idx=0;AUTHOR_RANKS.forEach((r,i)=>{if(score>=r.min)idx=i});const rank=AUTHOR_RANKS[idx],next=AUTHOR_RANKS[idx+1]||null;const pct=next?Math.max(0,Math.min(100,((score-rank.min)/(next.min-rank.min))*100)):100;return {...rank,score,next,pct};}
+function achievements(){
+ const c=ensureCareer(),styles=new Set(state.books.map(b=>b.coverStyle).filter(Boolean)).size,max=Math.max(0,...state.books.filter(b=>Number.isFinite(b.rating)).map(b=>b.rating));
+ return [
+  {icon:"📕",name:"はじめての一冊",desc:"絵本を1冊作る",ok:c.booksCreated>=1},
+  {icon:"👦",name:"はじめての読み聞かせ",desc:"チュゴンくんに評価してもらう",ok:c.reads>=1},
+  {icon:"⭐",name:"かなり好評！",desc:"8点以上を獲得",ok:max>=8},
+  {icon:"💯",name:"満点絵本",desc:"10/10を獲得",ok:c.tens>=1},
+  {icon:"📚",name:"棚がにぎやか",desc:"累計5冊作る",ok:c.booksCreated>=5},
+  {icon:"🖋️",name:"筆が止まらない",desc:"累計10冊作る",ok:c.booksCreated>=10},
+  {icon:"🎨",name:"七変化の表紙",desc:"3種類以上の表紙タッチ",ok:styles>=3},
+  {icon:"🔁",name:"お気に入りをもう一度",desc:"累計15回読み聞かせ",ok:c.reads>=15},
+  {icon:"🌙",name:"三週目の作家",desc:"3週間を終える",ok:c.weeksCompleted>=3},
+  {icon:"👑",name:"伝説への道",desc:"作家スコア130",ok:authorScore()>=130}
+ ];
+}
+function renderAuthorProfile(){
+ const r=authorRank(),name=getWriterName();
+ if($("authorProfileName"))$("authorProfileName").textContent=`${r.icon} ${name}`;
+ if($("authorRankText"))$("authorRankText").textContent=r.next?`${r.name} ・ ${r.score}pt / 次 ${r.next.min}pt`:`${r.name} ・ ${r.score}pt`;
+ if($("authorRankMeter"))$("authorRankMeter").style.width=`${r.pct}%`;
+}
+function showAchievements(){
+ const r=authorRank(),list=achievements(),done=list.filter(a=>a.ok).length;
+ showModal(`<h2>🏅 ${esc(getWriterName())}の作家実績</h2><div class="notice success">${r.icon} <b>${r.name}</b><br>作家スコア ${r.score}pt　｜　実績 ${done}/${list.length}</div><div class="achievement-grid">${list.map(a=>`<div class="achievement ${a.ok?"":"locked"}"><div class="aicon">${a.ok?a.icon:"🔒"}</div><b>${esc(a.name)}</b><span>${esc(a.desc)}</span></div>`).join("")}</div><button class="ghost" data-close-modal style="width:100%;margin-top:12px">閉じる</button>`);
+}
 function persistState(){
  const snapshot=clone(state);
  openDB().then(db=>new Promise((resolve,reject)=>{
@@ -508,6 +569,7 @@ function spendTime(h){if(!canSpend(h))return false;state.hour+=h;return true;}
 
 function renderAll(){
  bestResultBlobCache.clear();
+ ensureCareer();
  $("topDay").textContent=`📅 ${state.day}日目 / 7日`;
  $("topTime").textContent=`🕘 ${state.hour}:00`;
  $("topMoney").textContent=`💰 ${money(state.money)}`;
@@ -516,7 +578,7 @@ function renderAll(){
  $("itemCount").textContent=`${Object.values(state.inventory).filter(n=>n>0).length}種類`;
  $("timeyState").textContent=state.timeyUsed?"本日は勤務済み":"本日あと1回";
  syncWriterInput();
- renderBest();renderAlbum();renderItems();renderItemDex();renderShelf();
+ renderAuthorProfile();renderBest();renderAlbum();renderItems();renderItemDex();renderShelf();
 }
 function syncWriterInput(){
  const input=$("writerNameInput");
@@ -563,7 +625,7 @@ function renderItemDex(){
 function renderShelf(){
  $("shelfHead").textContent=`${state.books.length}/12`;
  if(!state.books.length){$("shelfGrid").innerHTML='<div class="empty" style="grid-column:1/-1">まだ絵本がありません。🖋️</div>';return;}
- $("shelfGrid").innerHTML=state.books.map(b=>`<div class="book" data-book="${b.id}"><img src="${b.cover}" alt=""><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${esc(getWriterName(b.writerName))}：さく</span><br><span class="muted">${b.week}週目 ${b.day}日目</span></div></div>`).join("");
+ $("shelfGrid").innerHTML=state.books.map(b=>`<div class="book" data-book="${b.id}"><img src="${b.cover}" alt=""><div class="meta"><span class="badge">${b.rating?`⭐ ${b.rating}/10`:"🆕 未読"}</span><div style="font-size:12px;font-weight:1000;margin-top:5px;line-height:1.35">${esc(b.title)}</div><span class="muted">${esc(getWriterName(b.writerName))}：さく</span><br><span class="muted">${b.week}週目 ${b.day}日目</span></div></div>`).join("");
 }
 
 function openCamera(){show("camera");$("cameraInput").click();}
@@ -982,6 +1044,7 @@ async function createBook(){
  }
  closeModal();
  const book={id:uid(),title:made.title,titleKind:made.kind,writerName:getWriterName(),cover,coverVersion:coverSource==="ai"?7:7,coverSource,coverStyle,coverModel,coverError,photoId:p.id,character:photoSubject(p),photoAlbumTitle:photoLabel(p),photoAnalysis:p.analysis||null,itemId:it.id,itemName:it.name,itemEmoji:it.emoji,rarity:it.rarity,week:state.week,day:state.day,rating:null,comment:null};
+ ensureCareer().booksCreated++;
  state.inventory[it.id]--;spendTime(2);state.daily.books++;
  if(state.books.length>=12){pendingBook=book;commit();renderBookSwap();return;}
  state.books.push(book);commit();showBookComplete(book);
@@ -994,7 +1057,7 @@ async function regenerateBookCover(id){
  showModal(`<div class="loading-icon">🎨</div><h2>表紙だけ仕上げ直しています…</h2><p style="font-weight:1000">『${esc(b.title)}』</p><p class="muted">タイトルはそのまま。新しい絵本タッチを選んで描き直します。<br>APIクレジットを使用します。</p>`);
  try{
   const generated=await generateAIBookCover(p,it,b.title,b.coverStyle||"");
-  b.cover=generated.cover;b.coverVersion=7;b.coverSource="ai";b.coverStyle=generated.style;b.coverModel=generated.model;b.coverError="";
+  b.cover=generated.cover;b.coverVersion=7;b.coverSource="ai";b.coverStyle=generated.style;b.coverModel=generated.model;b.coverError="";ensureCareer().coversRegenerated++;
   commit();closeModal();toast(`🎨 ${generated.style} で表紙を描き直しました`);showBookDetail(b.id);
  }catch(err){
   closeModal();toast(`表紙生成失敗：${cleanText(err?.message||"エラー",70)}`);showBookDetail(b.id);
@@ -1052,7 +1115,8 @@ function showBookComplete(b){
 function showRead(){
  show("read");
  if(!state.books.length){$("readArea").innerHTML='<div class="notice">本棚に絵本がありません。</div>';return;}
- $("readArea").innerHTML=`<p class="muted">読む絵本を選んでね。</p><div class="grid">${state.books.map(b=>`<div class="book" data-read-book="${b.id}"><img src="${b.cover}"><div class="meta">${b.rating?`⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${esc(getWriterName(b.writerName))}：さく</span></div></div>`).join("")}</div>`;
+ const ordered=[...state.books].sort((a,b)=>(a.rating?1:0)-(b.rating?1:0));
+ $("readArea").innerHTML=`<div class="notice">🆕 未読の本を先に表示しています。評価済みの本は何度でも読み返せます。</div><div class="grid" style="margin-top:10px">${ordered.map(b=>`<div class="book" data-read-book="${b.id}"><img src="${b.cover}"><div class="meta">${b.rating?`🔁 ⭐${b.rating}`:"🆕 未読"}<br>${esc(b.title)}<br><span class="muted">${esc(getWriterName(b.writerName))}：さく</span></div></div>`).join("")}</div>`;
 }
 function humorBonus(b){
  const words=["パンツ","トイレ","ゾンビ","UFO","爆弾","トイレット","おばけ","巨大","踊る","終わらない","しゃべる","空飛ぶ","なぞ","あやしい","宇宙人","ロボット","カレー","ラーメン"];
@@ -1158,7 +1222,11 @@ function commentFor(s,b){
   " でも次はもっとへんでもいいよ。"," これ、あとで急に思い出しそう。"," タイトルもう一回言って！"," なんでかは聞かないで。ぼくも知らない。",
   " いま点数つけたけど、明日ちょっと上がるかも。"," ここだけの話、ちょっと好き。"," もう一冊いける？"," 変なところがちゃんと変でよかった。",
   " これを考えた時の顔を見たかった。"," 一回だけ逆さにして見てもいい？"," 友だちには説明しないでそのまま見せたい。"," ぼくの中でまだ会議中。",
-  " 今日はこういうのを待ってた気がする。"," 次はタイトルをもっと長くしてもいいよ。逆に一文字でもいい。"," なんか負けた気がする。何に？"," 表紙だけ先に夢に出そう。"
+  " 今日はこういうのを待ってた気がする。"," 次はタイトルをもっと長くしてもいいよ。逆に一文字でもいい。"," なんか負けた気がする。何に？"," 表紙だけ先に夢に出そう。",
+  " これ、図書館に置いたら一冊だけこっそり動きそう。"," 題名を読んだらお腹がちょっと鳴った。関係ない。"," ぼくの中のランキングが今ガタガタ動いてる。"," 表紙を見てたら五分たった気がする。たってない。",
+  " この本のこと、歯みがき中に思い出しそう。"," なんか明日のぼくにも見せたい。"," これ、読んだ人だけ秘密の合言葉がありそう。"," 一ページ目の前にもう一ページありそうな感じ。",
+  " タイトルが変なのに堂々としてるのがいい。"," この本、たぶん雨にぬれても平気な顔する。"," 読んでる間だけ部屋がちょっと絵本屋さんになった。"," ぼくの点数より本のほうが自信ありそう。",
+  " 最後まで読んだら最初の表紙に戻りたくなった。"," これを思いついた瞬間をカメラで撮りたかった。"," 今日はこの本のことを一回だけ自慢していい？"," このタイトル、口の中で転がすと変な形してる。"
  );
  if(Math.random()<.56)c+=extras[Math.floor(Math.random()*extras.length)];
  if(Math.random()<.10){const tails=[" ……以上！"," たぶん！"," しらんけど！"," ぼく5さいだけど！"," いま決めた！"," 明日は違うこと言うかも！"];c+=tails[Math.floor(Math.random()*tails.length)];}
@@ -1167,15 +1235,28 @@ function commentFor(s,b){
  rememberComment(base,c);
  return c;
 }
+function ratingReaction(s){
+ if(s<=3)return {face:"😵",label:"うーん……！",cls:"low"};
+ if(s<=6)return {face:"🤔",label:"けっこう気になる！",cls:"mid"};
+ if(s<=8)return {face:"😆",label:"これ、好き！",cls:"high"};
+ if(s===9)return {face:"🤩",label:"かなり好き！！",cls:"top"};
+ return {face:"🎉",label:"だいすき！！！",cls:"top"};
+}
+const REREAD_COMMENTS=[
+ "もう一回読んだら、前より変なところが見つかった！","二回目なのにまた同じところで笑った。くやしい。","この本、読み返すとちょっと味が変わるね。食べてないけど。","知ってる本なのに、表紙を見るとまた開きたくなる。","今日は前と違うところが好きだった！","これ、三回目もたぶん読む。たぶんね。","前のぼくより今のぼくのほうがこの本をわかってる気がする。","もう点数は変えないけど、好きなところは増えた。","読み返す本って、ちょっと友だちみたい。","タイトルを覚えてた！ぼくえらい。","二回目のほうがタイトルが近づいてきた気がする。","この本、昨日よりちょっとだけこっち見てる。"
+];
+function rereadCommentFor(b){let pool=REREAD_COMMENTS;if(b.rating>=9)pool=pool.concat(["やっぱり好き！点数の上に点数を置きたい。","もう殿堂入りでよくない？","何回読んでも変。そこが最高！"]);return pool[Math.floor(Math.random()*pool.length)];}
 function readBook(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
  if(!canSpend(2)){toast("今日はもう読み聞かせる時間がありません");return;}
  const reread=!!b.rating;
  const oldBest=Math.max(0,...state.books.filter(x=>x.rating).map(x=>x.rating));
- if(!reread){const r=evaluate(b);b.rating=r.rating;b.comment=r.comment;}
- spendTime(2);state.daily.reads++;state.weeklyReads++;
+ if(!reread){const r=evaluate(b);b.rating=r.rating;b.comment=r.comment;if(b.rating===10)ensureCareer().tens++;}
+ const shownComment=reread?rereadCommentFor(b):b.comment;
+ spendTime(2);state.daily.reads++;state.weeklyReads++;ensureCareer().reads++;
  const newRecord=!reread&&b.rating>oldBest;commit();
- $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div style="font-size:54px">👦</div><p>「…………。」</p><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<div class="result-author">${esc(getWriterName(b.writerName))}：さく</div><div class="card"><b>👦「${esc(b.comment)}」</b></div>${reread?'<div class="notice">再読なので評価は変わりません。</div>':""}<p>🕒 +2時間</p><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
+ const react=ratingReaction(b.rating);
+ $("resultArea").innerHTML=`${newRecord?'<div class="notice success">🎉 NEW RECORD！最高評価を更新！</div>':""}<div class="rating-reaction ${react.cls}"><span class="rating-face">${react.face}</span><div class="rating-label">${react.label}</div></div><h1>⭐${b.rating} / 10</h1><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<div class="result-author">${esc(getWriterName(b.writerName))}：さく</div><div class="card"><b>👦「${esc(shownComment)}」</b></div>${reread?'<div class="reread-note">🔁 読み返しなので点数はそのまま。チュゴンくんの感想だけ新しくなりました。</div>':""}<p>🕒 +2時間</p><div class="row best-actions"><button class="bigbtn" data-save-best="${b.id}">🖼️ 画像保存</button><button class="bigbtn green" data-share-best="${b.id}">📤 共有</button></div><button class="bigbtn primary" data-nav="home">ホームへ</button>`;
  show("result");
 }
 function showBookDetail(id){
@@ -1341,7 +1422,8 @@ function restDay(){
   const weekly=state.books.filter(b=>b.week===state.week&&b.rating),score=weekly.length?Math.max(...weekly.map(b=>b.rating)):0,bests=weekly.filter(b=>b.rating===score);
   const created=state.books.filter(b=>b.week===state.week).length;weeklyResultCache={week:state.week,bests:[...bests],created,rated:weekly.length};
   const bestHtml=bests.length?`<p>🏆 今週の最高評価${bests.length>1?`（同率 ${bests.length}冊）`:""}</p><div style="display:grid;grid-template-columns:repeat(${Math.min(3,bests.length)},1fr);gap:8px;margin:8px 0 12px">${bests.slice(0,3).map(b=>`<div><img src="${b.cover}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><b style="display:block;margin-top:5px">⭐${b.rating}</b><span style="font-size:11px;font-weight:800">『${esc(b.title)}』</span><br><span style="font-size:10px;color:#7b6658">${esc(getWriterName(b.writerName))}：さく</span></div>`).join("")}</div>${bests.length>3?`<p class="muted">ほか ${bests.length-3}冊も同率ベスト！</p>`:""}`:`<p>今週は評価された本がありませんでした。</p>`;
-  showModal(`<h2>🎉 ${state.week}週目 終了！</h2>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="row" style="margin-top:10px"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><button class="bigbtn primary" data-next-week style="margin-top:10px;width:100%">☀️ 新しい1週間へ</button>`);
+  const rank=authorRank();
+  showModal(`<h2>🎉 ${state.week}週目 終了！</h2><div class="notice success">${rank.icon} ${esc(getWriterName())}<br><b>${rank.name}</b>・作家スコア ${rank.score}pt</div><div class="week-summary"><div>📕 ${created}<small>今週の新作</small></div><div>👦 ${weekly.length}<small>評価済み</small></div><div>⭐ ${score||"-"}<small>最高評価</small></div></div>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="row" style="margin-top:10px"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><button class="bigbtn primary" data-next-week style="margin-top:10px;width:100%">☀️ 新しい1週間へ</button>`);
   prepareWeeklyResultImage();
  }
 }
@@ -1349,10 +1431,12 @@ function nextDay(){
  state.day++;state.hour=9;state.timeyUsed=false;state.daily={photos:0,gacha:0,timey:0,books:0,reads:0};closeModal();commit();show("home");toast(`${state.day}日目スタート！`);
 }
 function nextWeek(){
+ ensureCareer().weeksCompleted++;
  state.week++;state.day=1;state.hour=9;state.money=1500;state.timeyUsed=false;state.inventory={};state.daily={photos:0,gacha:0,timey:0,books:0,reads:0};state.weeklyReads=0;closeModal();commit();show("home");toast("新しい1週間が始まりました！");
 }
 
 document.addEventListener("click",e=>{
+ if(e.target.closest("[data-achievements]")){showAchievements();return;}
  if(e.target.closest("[data-ai-settings]")){openAISettings();return;}
  if(e.target.closest("[data-save-ai-endpoint]")){saveAIEndpoint();return;}
  if(e.target.closest("[data-clear-ai-endpoint]")){clearAIEndpoint();return;}
