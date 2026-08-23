@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.0.1</title>
+<title>読み聞かせるね チュゴンくん α1.0.2</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -179,7 +179,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.0.1：AI写真解析のiPhone/Safari接続修正版。撮影した写真からアルバム名・主役・状況・場所・雰囲気・キーワードを自動生成し、次のAI絵本生成に使える情報として保存します。</div>
+    <div class="footer-note">α1.0.2：AI写真解析のiPhone/Safari XHR接続修正版。撮影した写真からアルバム名・主役・状況・場所・雰囲気・キーワードを自動生成し、次のAI絵本生成に使える情報として保存します。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -518,6 +518,30 @@ function normalizePhotoAnalysis(raw){
   version:1
  };
 }
+function postPhotoAnalysisXHR(endpoint,imageData){
+ return new Promise((resolve,reject)=>{
+  let xhr;
+  try{
+   xhr=new XMLHttpRequest();
+   xhr.open("POST",endpoint,true);
+   xhr.timeout=30000;
+  }catch(err){reject(err);return;}
+  xhr.onload=()=>{
+   let body={};
+   try{body=JSON.parse(xhr.responseText||"{}")}catch(_){body={}}
+   if(xhr.status>=200&&xhr.status<300){resolve(body);return;}
+   reject(new Error(body?.error||`HTTP ${xhr.status||0}`));
+  };
+  xhr.onerror=()=>reject(new Error("AIサーバーへ接続できませんでした"));
+  xhr.ontimeout=()=>reject(new Error("AI判定がタイムアウトしました"));
+  xhr.onabort=()=>reject(new Error("AI判定が中断されました"));
+  try{
+   // Safariで起きていたRequest/headers構築エラーを避けるため、fetchを使わない。
+   // setRequestHeaderも呼ばず、単純なPOSTとして送信する。
+   xhr.send(JSON.stringify({image:imageData}));
+  }catch(err){reject(err);}
+ });
+}
 async function analyzeCapturedPhoto(){
  if(!capturedData||photoAnalysisBusy)return;
  const endpoint=getAIEndpoint();
@@ -530,27 +554,17 @@ async function analyzeCapturedPhoto(){
  photoAnalysisBusy=true;
  $("reanalyzePhotoBtn").disabled=true;$("savePhotoBtn").disabled=true;
  $("albumTitleInput").value="";
- setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…',"wait");
- const ctrl=new AbortController(),timer=setTimeout(()=>ctrl.abort(),30000);
+ setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…<div class="ai-detail">通信方式: XHR / build α1.0.2</div>',"wait");
  try{
-  // iPhone / Safari 互換性のためカスタム headers を付けずに送信する。
-  // Edge Function 側は req.json() で本文を解析するため Content-Type 明示は不要。
-  const res=await fetch(endpoint,{
-   method:"POST",
-   body:JSON.stringify({image:capturedData}),
-   signal:ctrl.signal,
-   cache:"no-store"
-  });
-  let body=null;try{body=await res.json()}catch(_){body={}}
-  if(!res.ok)throw new Error(body?.error||`HTTP ${res.status}`);
+  const body=await postPhotoAnalysisXHR(endpoint,capturedData);
   const a=normalizePhotoAnalysis(body);
   if(!a.albumTitle)throw new Error("AIからタイトルが返りませんでした");
   currentPhotoAnalysis=a;renderPhotoAnalysis(a);
  }catch(err){
-  const msg=err?.name==="AbortError"?"AI判定がタイムアウトしました":cleanText(err?.message||"AI判定に失敗しました",80);
-  setPhotoAiUI("判定できず",`${esc(msg)}<br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
+  const msg=cleanText(err?.message||"AI判定に失敗しました",120);
+  setPhotoAiUI("判定できず",`${esc(msg)}<br><span class="ai-detail">build α1.0.2 / XHR</span><br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
  }finally{
-  clearTimeout(timer);photoAnalysisBusy=false;$("reanalyzePhotoBtn").disabled=false;$("savePhotoBtn").disabled=false;
+  photoAnalysisBusy=false;$("reanalyzePhotoBtn").disabled=false;$("savePhotoBtn").disabled=false;
  }
 }
 function openAISettings(){
