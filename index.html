@@ -114,9 +114,11 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
 .help-item p{margin:0;line-height:1.75}.help-line{display:block;margin-top:8px;padding-left:1.2em;text-indent:-1.2em}.help-line:first-child{margin-top:0}.best-actions{margin-top:10px}.best-actions .bigbtn{min-height:48px;padding:10px 8px;font-size:13px}.dex-link{width:100%;margin:8px 0 4px;text-align:left}.legend-note{font-size:13px;line-height:1.6}.dex-filter-group{margin-top:12px}.dex-filter-title{font-size:12px;font-weight:1000;color:var(--muted);margin:0 0 6px 3px}
 .ai-panel{margin-top:12px;padding:14px;border-radius:18px;background:#fff;border:1px solid var(--line)}.ai-head{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:8px}.ai-status{display:inline-flex;align-items:center;gap:6px;padding:5px 9px;border-radius:999px;background:#f1ece7;font-size:12px;font-weight:1000}.ai-status.ok{background:#e9f7ed;color:#28683a}.ai-status.wait{background:#fff3cf;color:#7b5a00}.ai-status.err{background:#ffe8e3;color:#9a3e2b}.ai-result-title{font-size:20px;font-weight:1000;line-height:1.35;margin:8px 0}.ai-tags{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}.ai-tag{padding:5px 8px;border-radius:999px;background:#f4f0ec;font-size:11px;font-weight:900}.ai-detail{font-size:12px;color:var(--muted);line-height:1.6}.album-title{font-size:13px;font-weight:1000;line-height:1.4;margin-bottom:4px}.ai-settings-note{font-size:12px;color:var(--muted);line-height:1.6;text-align:left}
 
-.overlay{position:fixed;inset:0;z-index:100;background:rgba(31,26,22,.76);display:none;align-items:center;justify-content:center;padding:22px}
+.overlay{position:fixed;inset:0;z-index:100;background:rgba(31,26,22,.76);display:none;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) 12px calc(86px + env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
 .overlay.show{display:flex}
-.modal{width:min(92vw,430px);background:var(--cream);border-radius:25px;padding:22px;text-align:center;box-shadow:0 20px 55px rgba(0,0,0,.28)}
+.modal{width:min(92vw,430px);background:var(--cream);border-radius:25px;padding:22px;text-align:center;box-shadow:0 20px 55px rgba(0,0,0,.28);max-height:calc(100dvh - 118px - env(safe-area-inset-bottom));overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;touch-action:pan-y}
+.modal-sticky-actions{position:sticky;bottom:-1px;z-index:5;margin:12px -8px -10px;padding:12px 8px calc(8px + env(safe-area-inset-bottom));background:linear-gradient(to bottom,rgba(255,251,240,0),var(--cream) 18%,var(--cream) 100%);border-radius:0 0 18px 18px}
+.modal-scroll-hint{font-size:12px;color:var(--muted);margin:4px 0 0}
 .gacha-machine{font-size:82px;display:inline-block}
 .gacha-machine.shake{animation:shake .15s linear 0s 7}
 .capsule{font-size:78px;animation:pop .42s ease-out}
@@ -561,7 +563,11 @@ function toast(msg){
  clearTimeout(toast.timer);toast.timer=setTimeout(()=>t.classList.remove("show"),1900);
 }
 function showModal(content){
- $("modal").innerHTML=content;$("overlay").classList.add("show");
+ const modal=$("modal"),overlay=$("overlay");
+ modal.innerHTML=content;
+ modal.scrollTop=0;overlay.scrollTop=0;
+ overlay.classList.add("show");
+ requestAnimationFrame(()=>{modal.scrollTop=0;overlay.scrollTop=0;});
 }
 function closeModal(){$("overlay").classList.remove("show");$("modal").innerHTML="";}
 function spendTime(h){if(!canSpend(h))return false;state.hour+=h;return true;}
@@ -1422,7 +1428,7 @@ function restDay(){
   const created=state.books.filter(b=>b.week===state.week).length;weeklyResultCache={week:state.week,bests:[...bests],created,rated:weekly.length};
   const bestHtml=bests.length?`<p>🏆 今週の最高評価${bests.length>1?`（同率 ${bests.length}冊）`:""}</p><div style="display:grid;grid-template-columns:repeat(${Math.min(3,bests.length)},1fr);gap:8px;margin:8px 0 12px">${bests.slice(0,3).map(b=>`<div><img src="${b.cover}" style="width:100%;aspect-ratio:3/4;object-fit:cover;border-radius:12px"><b style="display:block;margin-top:5px">⭐${b.rating}</b><span style="font-size:11px;font-weight:800">『${esc(b.title)}』</span><br><span style="font-size:10px;color:#7b6658">${esc(getWriterName(b.writerName))}：さく</span></div>`).join("")}</div>${bests.length>3?`<p class="muted">ほか ${bests.length-3}冊も同率ベスト！</p>`:""}`:`<p>今週は評価された本がありませんでした。</p>`;
   const rank=authorRank();
-  showModal(`<h2>🎉 ${state.week}週目 終了！</h2><div class="notice success">${rank.icon} ${esc(getWriterName())}<br><b>${rank.name}</b>・作家スコア ${rank.score}pt</div><div class="week-summary"><div>📕 ${created}<small>今週の新作</small></div><div>👦 ${weekly.length}<small>評価済み</small></div><div>⭐ ${score||"-"}<small>最高評価</small></div></div>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="row" style="margin-top:10px"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><button class="bigbtn primary" data-next-week style="margin-top:10px;width:100%">☀️ 新しい1週間へ</button>`);
+  showModal(`<h2>🎉 ${state.week}週目 終了！</h2><div class="notice success">${rank.icon} ${esc(getWriterName())}<br><b>${rank.name}</b>・作家スコア ${rank.score}pt</div><div class="week-summary"><div>📕 ${created}<small>今週の新作</small></div><div>👦 ${weekly.length}<small>評価済み</small></div><div>⭐ ${score||"-"}<small>最高評価</small></div></div>${bestHtml}<div class="notice">写真と本棚は次の週にも引き継ぎます。</div><div class="modal-sticky-actions"><button class="bigbtn primary" data-next-week style="width:100%;margin-bottom:9px">☀️ 新しい1週間へ</button><div class="row"><button class="bigbtn" data-save-week disabled>🖼️ 画像準備中…</button><button class="bigbtn green" data-share-week disabled>📤 画像準備中…</button></div><div class="modal-scroll-hint">この画面は上下にスクロールできます</div></div>`);
   prepareWeeklyResultImage();
  }
 }
