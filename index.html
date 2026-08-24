@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#169fe4">
-<title>読み聞かせるね チュゴンくん α1.3.0</title>
+<title>読み聞かせるね チュゴンくん</title>
 <style>
 :root{
   --blue:#119de2; --blue2:#087fc4; --cream:#fffaf0; --paper:#fffdf8;
@@ -216,7 +216,6 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
       <h2>🏆 現在の最高評価絵本</h2>
       <div id="bestContent" class="empty">まだ評価された絵本はありません。</div>
     </div>
-    <div class="footer-note">α1.3.0：作家ランク・実績、評価リアクション、読み返しコメント、本棚演出を追加。</div>
   </main>
 
   <main id="screen-help" class="screen">
@@ -227,7 +226,7 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
         <div class="help-item"><h3>🕘 時間</h3><p><span class="help-line">・1日は <b>9:00〜21:00</b>。</span><span class="help-line">・📸 撮影だけ：0時間 ／ 写真保存：+1時間</span><span class="help-line">・🎰 ガチャ：+1時間 ／ 🖋️ 絵本作成：+2時間</span><span class="help-line">・👦 読み聞かせ：+2時間 ／ 🏃 タイミー：2〜8時間</span></p></div>
         <div class="help-item"><h3>📸 写真</h3><p><span class="help-line">・写真は好きなだけ撮影できます。</span><span class="help-line">・撮影するとAIが写真を読み取り、<b>アルバム名</b>を自動で考えます。</span><span class="help-line">・AIは主役・状況・場所・雰囲気・キーワードも一緒に記録します。</span><span class="help-line">・アルバム名は保存前に自分で直すこともできます。</span><span class="help-line">・アルバムは <b>最大9枚</b>。</span><span class="help-line">・いっぱいの時は、残したい写真と交換して保存します。</span></p></div>
         <div class="help-item"><h3>🤖 AI写真判定・AI表紙</h3><p><span class="help-line">・AIの秘密キーはこのHTMLには保存しません。</span><span class="help-line">・写真はSupabase Edge Function経由でAIが読み取り、アルバム名を提案します。</span><span class="help-line">・最初に絵本作家の名前を決めてからゲームを始めます。
-・絵本のタイトルは今まで通りゲーム内で決定し、そのタイトル・写真の解析情報・アイテムをもとに、文字なしの表紙イラストを生成します。</span><span class="help-line">・絵柄は水彩、色鉛筆、貼り絵など様々な絵本タッチからランダムに選ばれます。</span><span class="help-line">・完成後はタイトルを変えずに「表紙だけ作り直す」こともできます。</span></p><button class="ghost" data-ai-settings style="width:100%;margin-top:10px">⚙️ AI接続設定</button></div>
+・絵本のタイトルは今まで通りゲーム内で決定し、そのタイトル・写真の解析情報・アイテムをもとに、文字なしの表紙イラストを生成します。</span><span class="help-line">・絵柄は水彩、色鉛筆、貼り絵など様々な絵本タッチからランダムに選ばれます。</span><span class="help-line">・完成後はタイトルを変えずに「表紙だけ作り直す」こともできます。</span></p></div>
         <div class="help-item"><h3>🎰 ガチャ</h3><p><span class="help-line">・1回 <b>500円</b>。</span><span class="help-line">・C / R / SR / SSR、全部で <b>300アイテム</b>。</span><span class="help-line">・絵本作成に使ったアイテムは1個消費します。</span></p><button class="ghost" data-open-itemdex="help" style="width:100%;margin-top:10px">🎁 アイテム一覧</button></div>
         <div class="help-item"><h3>🏃 タイミー</h3><p><span class="help-line">・働けるのは <b>1日1回</b>。</span><span class="help-line">・毎日ランダムに出る3つの仕事から選びます。</span><span class="help-line">・仕事によって <b>2〜8時間</b>、もらえる金額も大きく変わります。</span></p></div>
         <div class="help-item"><h3>🖋️ 絵本</h3><p><span class="help-line">・アルバムの写真1枚＋アイテム1個で絵本を作ります。</span><span class="help-line">・組み合わせから、タイトルと表紙ができあがります。</span><span class="help-line">・本棚は <b>最大12冊</b>。</span></p></div>
@@ -250,7 +249,6 @@ input[type=text]{width:100%;padding:13px 14px;border:1px solid var(--line);borde
           <input id="albumTitleInput" type="text" maxlength="40" placeholder="例：イスに座るカエル">
           <div class="row">
             <button id="reanalyzePhotoBtn" class="ghost" type="button">🔄 もう一度AI判定</button>
-            <button class="ghost" data-ai-settings type="button">⚙️ AI接続</button>
           </div>
         </div>
         <div class="row" style="margin-top:10px">
@@ -386,7 +384,8 @@ const esc=s=>String(s??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&
 const itemById=id=>ITEMS.find(x=>x.id===Number(id));
 const canSpend=h=>state.hour+h<=21;
 const AI_ENDPOINT_KEY="chugon_ai_endpoint_v1";
-const getAIEndpoint=()=>{try{return (localStorage.getItem(AI_ENDPOINT_KEY)||"").trim()}catch(_){return ""}};
+const DEFAULT_AI_ENDPOINT="https://ievxvwojsflijfhqweyq.supabase.co/functions/v1/analyze-photo";
+const getAIEndpoint=()=>{try{return (localStorage.getItem(AI_ENDPOINT_KEY)||DEFAULT_AI_ENDPOINT).trim()}catch(_){return DEFAULT_AI_ENDPOINT}};
 function getCoverEndpoint(){
  const endpoint=getAIEndpoint();
  if(!endpoint)return "";
@@ -651,7 +650,7 @@ function setPhotoAiUI(status,text,kind=""){
  if(sum)sum.innerHTML=text;
 }
 function renderPhotoAnalysis(a){
- if(!a){setPhotoAiUI("未判定",'AI接続がない場合は、下のアルバムタイトルを手入力して保存できます。',"err");return;}
+ if(!a){setPhotoAiUI("未判定",'写真判定を利用できない場合は、下のアルバムタイトルを手入力して保存できます。',"err");return;}
  const tags=[a.subject,a.action,a.place,a.mood].filter(Boolean).map(v=>`<span class="ai-tag">${esc(v)}</span>`).join("");
  const keys=(a.keywords||[]).slice(0,6).map(v=>esc(v)).join(" / ");
  const conf=Number.isFinite(Number(a.confidence))?`・確信度 ${Math.round(Number(a.confidence)*100)}%`:"";
@@ -703,13 +702,13 @@ async function analyzeCapturedPhoto(){
  currentPhotoAnalysis=null;
  if(!endpoint){
   $("albumTitleInput").value="";
-  setPhotoAiUI("AI未接続",'⚙️「AI接続」からEdge FunctionのURLを設定すると、自動で写真を読み取ります。<br>今はタイトルを手入力して保存できます。',"err");
+  setPhotoAiUI("AI未接続",'写真判定サービスに接続できませんでした。<br>今はタイトルを手入力して保存できます。',"err");
   return;
  }
  photoAnalysisBusy=true;
  $("reanalyzePhotoBtn").disabled=true;$("savePhotoBtn").disabled=true;
  $("albumTitleInput").value="";
- setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…<div class="ai-detail">通信方式: XHR / build α1.1</div>',"wait");
+ setPhotoAiUI("解析中…",'<div class="loading-icon" style="font-size:34px">👀</div>写真を見て、アルバム名を考えています…',"wait");
  try{
   const body=await postPhotoAnalysisXHR(endpoint,capturedData);
   const a=normalizePhotoAnalysis(body);
@@ -717,7 +716,7 @@ async function analyzeCapturedPhoto(){
   currentPhotoAnalysis=a;renderPhotoAnalysis(a);
  }catch(err){
   const msg=cleanText(err?.message||"AI判定に失敗しました",120);
-  setPhotoAiUI("判定できず",`${esc(msg)}<br><span class="ai-detail">build α1.1 / XHR</span><br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
+  setPhotoAiUI("判定できず",`${esc(msg)}<br>タイトルを手入力して保存するか、「もう一度AI判定」を押してね。`,"err");
  }finally{
   photoAnalysisBusy=false;$("reanalyzePhotoBtn").disabled=false;$("savePhotoBtn").disabled=false;
  }
@@ -1009,7 +1008,7 @@ function composeAICover(aiImage,title,writerName){
 }
 async function generateAIBookCover(p,it,title,avoidStyle=""){
  const endpoint=getCoverEndpoint();
- if(!endpoint)throw new Error("AI接続URLが未設定です");
+ if(!endpoint)throw new Error("表紙サービスに接続できません");
  const a=p?.analysis||{};
  const body=await postBookCoverXHR(endpoint,{
   title,
@@ -1053,7 +1052,7 @@ async function regenerateBookCover(id){
  const b=state.books.find(x=>x.id===id);if(!b)return;
  const p=state.album.find(x=>x.id===b.photoId),it=itemById(b.itemId);
  if(!p||!it){toast("元の写真またはアイテム情報が見つかりません");return;}
- if(!getCoverEndpoint()){toast("AI接続設定を確認してね");return;}
+ if(!getCoverEndpoint()){toast("表紙サービスに接続できませんでした");return;}
  showModal(`<div class="loading-icon">🎨</div><h2>表紙だけ仕上げ直しています…</h2><p style="font-weight:1000">『${esc(b.title)}』</p><p class="muted">タイトルはそのまま。新しい絵本タッチを選んで描き直します。<br>APIクレジットを使用します。</p>`);
  try{
   const generated=await generateAIBookCover(p,it,b.title,b.coverStyle||"");
@@ -1108,7 +1107,7 @@ function replaceBook(id){
 }
 function showBookComplete(b){
  const coverInfo=b.coverSource==="ai"?`<div class="notice success">📘 絵本らしい表紙に仕上がりました（${esc(b.coverStyle||"絵本タッチ")}）</div>`:`<div class="notice">📷 表紙を生成できなかったため、写真ベースの表紙で仕上げました。${b.coverError?`<br><span class="muted">${esc(b.coverError)}</span>`:""}</div>`;
- $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<p class="result-author">${esc(getWriterName(b.writerName))}：さく</p><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトルは変わりません。AI画像生成のAPIクレジットを使用します。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
+ $("resultArea").innerHTML=`<h2>📕 新作絵本が完成しました！</h2><img class="cover-large" src="${b.cover}">${prettyTitleCard(b.title)}<p class="result-author">${esc(getWriterName(b.writerName))}：さく</p><p>📷 ${b.character?esc(b.character):"主役不明"}<br>${b.itemEmoji} ${esc(b.itemName)}<br>📅 ${b.week}週目 ${b.day}日目</p>${coverInfo}<button class="bigbtn" data-regenerate-cover="${b.id}">🎨 表紙だけ作り直す</button><div class="small" style="margin-top:6px">※タイトル・評価は変わりません。表紙の作り直しには少し時間がかかります。</div><div class="notice success" style="margin-top:10px">アイテムを1個消費しました。🕒 +2時間</div><button class="bigbtn primary" data-nav="shelf" style="margin-top:12px">📚 本棚を見る</button><button class="ghost" data-nav="home" style="margin-top:8px">ホームへ</button>`;
  show("result");
 }
 
@@ -1500,20 +1499,6 @@ function init(){
    renderAll();
  }).catch(()=>{});
 
- if(location.search.includes("selftest=1")) runSelfTest();
-}
-function runSelfTest(){
- const saved=clone(state);
- try{
-  state=clone(DEFAULT_STATE);
-  const it=drawGacha();state.money-=500;state.inventory[it.id]=1;
-  const gachaOK=state.money===1000&&state.inventory[it.id]===1;
-  const job=JOBS[0];state.money+=1200;state.timeyUsed=true;state.hour+=job.hours;
-  const timeyOK=state.timeyUsed&&state.hour===9+job.hours;
-  state.album.push({id:"t",data:"data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==",character:"テストネコ",day:1,week:1});
-  const albumOK=state.album.length===1;
-  const result=document.createElement("div");result.id="selftest";result.textContent=(gachaOK&&timeyOK&&albumOK)?"SELFTEST:PASS":"SELFTEST:FAIL";document.body.appendChild(result);
- }finally{state=saved;renderAll();}
 }
 init();
 </script>
